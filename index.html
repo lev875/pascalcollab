@@ -8,31 +8,21 @@
         width: 96vw;
         margin-bottom: 10px;
     }
-    #output {
-        height: 40vh;
-        width: 96vw;
-        background-color: lime;
-    }
-    #wrap {
-        position: absolute;
-    }
 </style>
 </head>
 <body>
 
-<div id="wrap">
-    <div id="editor">program HW
-    begin
-        writeln("HW");
-    end;
-    </div>
-    <div id="output">
-        <form method="post" action="/">
-            <textarea name="content" id="content" style="display: none;"></textarea>
-            <input type="submit" value="submit"></input>
-        </form>
-    </div>
+<div id="editor">program HW
+begin
+    writeln("HW");
+end;
 </div>
+
+<form method="post" action="/">
+    <textarea name="content" id="content" style="display: none;"></textarea>
+    <input type="submit" value="submit"></input>
+</form>
+
 <script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+noconflict/mode-pascal.js+noconflict/snippets/pascal.js+min/theme-monokai.js+noconflict/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
 <script>
