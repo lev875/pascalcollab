@@ -16,6 +16,6 @@ app.get('/', function(request, response) {
     response.sendFile(path.join(__dirname+'/index.html'));
 }).listen(app.get('port'));
 
-app.post("/", function (request, response) {
+app.post("/compile", function (request, response) {
     console.log(request.body.code)
 });
