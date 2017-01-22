@@ -19,7 +19,7 @@ function OnRequest(request, response){
 
 function OnCompile(request, response) {
     console.log(request.body.code)
-    var compile = spawn('fpc');
+    var compile = spawn('gcc');
 	
 	compile.stdout.on('data', function (data) {
     	console.log('stdout: ' + data);
@@ -27,9 +27,9 @@ function OnCompile(request, response) {
 	compile.stderr.on('data', function (data) {
     	console.log(String(data));
 	});
-    response.send(data);
+    response.send('OK');
 }
 
 app.get('/', OnRequest).listen(app.get('port'));
 
-app.post("/compile", OnCompile);
+app.post('/compile', OnCompile);
