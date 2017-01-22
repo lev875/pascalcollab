@@ -18,6 +18,7 @@ app.get('/', function(request, response) {
     console.log('App is running, server is listening on port ', app.get('port'));
 });
 
-app.post("/", function (req, res) {
-    console.log(req.body.content)
+app.post("/", function (request, response) {
+    console.log(request.body.content)
+    response.sendFile(path.join(__dirname+'/index.html'));
 });
