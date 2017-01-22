@@ -14,9 +14,7 @@ app.use(bodyParser.json());
 //For avoidong Heroku $PORT error
 app.get('/', function(request, response) {
     response.sendFile(path.join(__dirname+'/index.html'));
-}).listen(app.get('port'), function() {
-    console.log('App is running, server is listening on port ', app.get('port'));
-});
+}).listen(app.get('port'));
 
 app.post("/", function (request, response) {
     console.log(request.body.code)
