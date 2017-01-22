@@ -28,6 +28,8 @@ end;
     editor.setTheme("ace/theme/monokai");
     editor.getSession().setMode("ace/mode/pascal");
 
+    textarea.value = "";
+
     function SendCode(){
         var xhr = new XMLHttpRequest();
 
