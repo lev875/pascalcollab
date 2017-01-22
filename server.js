@@ -2,6 +2,8 @@ var express    = require('express');
 var app        = express();
 var path       = require("path");
 var bodyParser = require('body-parser')
+var spawn      = require('child_process').spawn;
+
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -17,7 +19,15 @@ function OnRequest(request, response){
 
 function OnCompile(request, response) {
     console.log(request.body.code)
-    response.send("OK");
+    var compile = spawn('fpc');
+	
+	compile.stdout.on('data', function (data) {
+    	console.log('stdout: ' + data);
+	});
+	compile.stderr.on('data', function (data) {
+    	console.log(String(data));
+	});
+    response.send(data);
 }
 
 app.get('/', OnRequest).listen(app.get('port'));
