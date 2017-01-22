@@ -21,9 +21,7 @@ end;
 <button onclick="SendCode()">Send</button>
 
 <script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+noconflict/mode-pascal.js+noconflict/snippets/pascal.js+min/theme-monokai.js+noconflict/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
 <script>
-    var textarea = $('#content');
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
     editor.getSession().setMode("ace/mode/pascal");
@@ -31,9 +29,9 @@ end;
     function SendCode(){
         var xhr = new XMLHttpRequest();
 
-        xhr.open('POST','/compile',true);
+        xhr.open('POST', '/compile', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        var body = 'code=' + editor.getSession().getValue();
+        var body = 'code=' + encodeURIComponent(editor.getSession().getValue());
         xhr.send(body);
     }
 </script>
