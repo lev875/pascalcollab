@@ -19,5 +19,5 @@ app.get('/', function(request, response) {
 });
 
 app.post("/", function (req, res) {
-    console.log(req.body.user.name)
+    console.log(req.body.content)
 });
