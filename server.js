@@ -17,7 +17,7 @@ function OnRequest(request, response){
 
 function OnCompile(request, response) {
     console.log(request.body.code)
-    response = "OK";
+    response.send("OK");
 }
 
 app.get('/', OnRequest).listen(app.get('port'));
