@@ -43,7 +43,7 @@ end;
 
             button.innerHTML = "Send";
             button.disabled = false;
-            textarea = xhr.responseText;
+            textarea.value = xhr.responseText;
         }
 
         button.innerHTML = 'Загружаю...';
