@@ -15,10 +15,11 @@ function OnRequest(request, response){
     response.sendFile(path.join(__dirname+'/index.html'));
 }
 
-function Compile(request, response) {
+function OnCompile(request, response) {
     console.log(request.body.code)
+    response = "OK";
 }
 
 app.get('/', OnRequest).listen(app.get('port'));
 
-app.post("/compile", Compile);
+app.post("/compile", OnCompile);
