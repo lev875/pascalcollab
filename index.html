@@ -33,7 +33,8 @@ end;
 
         xhr.open('POST','',true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.send(editor.getSession().getValue());
+        var code = editor.getSession().getValue();
+        xhr.send(code);
     }
 </script>
 </body>
