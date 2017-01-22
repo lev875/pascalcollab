@@ -19,6 +19,6 @@ app.get('/', function(request, response) {
 });
 
 app.post("/", function (request, response) {
-    console.log(request.body.content)
+    console.log(request.body)
     response.sendFile(path.join(__dirname+'/index.html'));
 });
