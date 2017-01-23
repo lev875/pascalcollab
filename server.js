@@ -23,7 +23,7 @@ function OnCompile(request, response) {
     fs.writeFile(name + '.cpp', request.body.code, (err) => {
   		if (err) return console.error(err);
    		else {
-    		var compile = spawn('g++',[name + '.cpp']);
+    		var compile = spawn('g++',['-o', name + '.out', name + '.cpp']);
 			var buf = '';
 	
 			compile.stdout.on('data', (data) => {
@@ -58,11 +58,11 @@ function OnCompile(request, response) {
             			response.send(buf);
 						fs.unlink(name + '.cpp', (err) => {
 							if (err) return console.error(err);
-							console.log('temp.cpp deleted');
+							console.log(name + '.cpp deleted');
 						});
 						fs.unlink(name + '.out', (err) => {
 							if (err) return console.error(err);
-							console.log('a.out deleted');
+							console.log(name + '.out deleted');
 						});
         			})
     			} else {
