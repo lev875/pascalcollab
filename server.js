@@ -28,18 +28,21 @@ function OnCompile(request, response) {
     			console.log('stdout: ' + data);
 			});
 			compile.stderr.on('data', (data) => {
-				console.log(String(data));
-				buf += data;
-			});
-			compile.stderr.on('close', (data) => {
 				fs.unlink('temp.cpp', (err) => {
 					if (err) return console.error(err);
 					console.log('temp.cpp deleted (error)');
-				});
-			})
+				})	
+				console.log(String(data));
+				buf += data;		
+			});
 			compile.on('close', (data) => {
     			if (data === 0) {
         			var run = spawn('./a.out', []);
+
+					if(request.body.input != '') {
+						run.stdin.write(request.body.input);
+						run.stdin.end();
+					}
         	
         			run.stdout.on('data', (output) => {
             			console.log(String(output));
