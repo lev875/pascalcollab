@@ -41,14 +41,15 @@ function OnCompile(request, response) {
         	
         			run.stdout.on('data', (output) => {
             			console.log(String(output));
-            			response.send(String(output));
+            			buf += output;
         			});
         			run.stderr.on('data', (output) => {
             			console.log(String(output));
-            			response.send(String(output));
+            			buf += output;
         			});
         			run.on('close', (output) => {
             			console.log('stdout: ' + output);
+            			response.send(buf);
 						fs.unlink('temp.cpp', (err) => {
 							if (err) return console.error(err);
 							console.log('temp.cpp deleted');
