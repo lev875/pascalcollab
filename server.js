@@ -18,10 +18,10 @@ function OnRequest(request, response){
 }
 
 function OnCompile(request, response) {
-    fs.writeFile('temp.cpp', request.body.code, (err) => {
+    fs.writeFile('temp.pas', request.body.code, (err) => {
   		if (err) return console.error(err);
    		else {
-    		var compile = spawn('g++',['temp.cpp']);
+    		var compile = spawn('fpc',['temp.pas']);
 	
 			compile.stdout.on('data', function (data) {
     			console.log('stdout: ' + data);
@@ -31,7 +31,7 @@ function OnCompile(request, response) {
 			});
 			compile.on('close', function (data) {
     			if (data === 0) {
-        			var run = spawn('./a.out', []);
+        			var run = spawn('./temp', []);
         	
         			run.stdout.on('data', function (output) {
             			console.log(String(output));
