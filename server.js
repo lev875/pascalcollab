@@ -42,13 +42,13 @@ function OnCompile(request, response) {
         			});
         			run.on('close', function (output) {
             			console.log('stdout: ' + output);
-						fs.unlink('temp.cpp', (err) => {
+						fs.unlink('temp.pas', (err) => {
 							if (err) return console.error(err);
 							console.log('temp.cpp');
 						});
 						fs.unlink('a.out', (err) => {
 							if (err) return console.error(err);
-							console.log('a.out');
+							console.log('temp');
 						});
         			})
     			}
