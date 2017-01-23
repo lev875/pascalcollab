@@ -32,7 +32,7 @@ function OnCompile(request, response) {
 					if (err) return console.error(err);
 					console.log('temp.cpp deleted (error)');
 				});
-				console.log(String(data));
+				console.log(data);
 				buf += data;
 			});
 			compile.on('close', (data) => {
