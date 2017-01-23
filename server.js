@@ -5,7 +5,7 @@ var bodyParser = require('body-parser')
 var spawn      = require('child_process').spawn;
 var fs         = require('fs');
 
-app.set('port', (process.env.PORT || 5000));
+app.set('port', (process.env.PORT || 8080));
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -18,11 +18,10 @@ function OnRequest(request, response){
 }
 
 function OnCompile(request, response) {
-    fs.writeFile('temp.cpp', request.body.code, function(err) {
-  		if (err) {
-      		return console.error(err);
-   		} else {
-    		var compile = spawn('gcc',['temp.cpp']);
+    fs.writeFile('temp.cpp', request.body.code, (err) => {
+  		if (err) return console.error(err);
+   		else {
+    		var compile = spawn('g++',['temp.cpp']);
 	
 			compile.stdout.on('data', function (data) {
     			console.log('stdout: ' + data);
@@ -32,7 +31,7 @@ function OnCompile(request, response) {
 			});
 			compile.on('close', function (data) {
     			if (data === 0) {
-        			var run = spawn('./a.exe', []);
+        			var run = spawn('./a.out', []);
         	
         			run.stdout.on('data', function (output) {
             			console.log(String(output));
@@ -43,13 +42,19 @@ function OnCompile(request, response) {
         			});
         			run.on('close', function (output) {
             			console.log('stdout: ' + output);
+						fs.unlink('temp.cpp', (err) => {
+							if (err) return console.error(err);
+							console.log('temp.cpp');
+						});
+						fs.unlink('a.out', (err) => {
+							if (err) return console.error(err);
+							console.log('a.out');
+						});
         			})
     			}
 			})
 		}
 	});
-	
-    response.send('OK');
 }
 
 app.get('/', OnRequest).listen(app.get('port'));
