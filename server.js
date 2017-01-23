@@ -1,6 +1,6 @@
 var express    = require('express');
 var app        = express();
-var path       = require("path");
+var path       = require('path');
 var bodyParser = require('body-parser')
 var spawn      = require('child_process').spawn;
 var fs         = require('fs');
@@ -22,37 +22,45 @@ function OnCompile(request, response) {
   		if (err) return console.error(err);
    		else {
     		var compile = spawn('g++',['temp.cpp']);
+			var buf = '';
 	
-			compile.stdout.on('data', function (data) {
+			compile.stdout.on('data', (data) => {
     			console.log('stdout: ' + data);
 			});
-			compile.stderr.on('data', function (data) {
-    			console.log(String(data));
+			compile.stderr.on('data', (data) => {
+				fs.unlink('temp.cpp', (err) => {
+					if (err) return console.error(err);
+					console.log('temp.cpp deleted (error)');
+				});
+				console.log(String(data));
+				buf += data;
 			});
-			compile.on('close', function (data) {
+			compile.on('close', (data) => {
     			if (data === 0) {
         			var run = spawn('./a.out', []);
         	
-        			run.stdout.on('data', function (output) {
+        			run.stdout.on('data', (output) => {
             			console.log(String(output));
             			response.send(String(output));
         			});
-        			run.stderr.on('data', function (output) {
+        			run.stderr.on('data', (output) => {
             			console.log(String(output));
             			response.send(String(output));
         			});
-        			run.on('close', function (output) {
+        			run.on('close', (output) => {
             			console.log('stdout: ' + output);
 						fs.unlink('temp.cpp', (err) => {
 							if (err) return console.error(err);
-							console.log('temp.cpp');
+							console.log('temp.cpp deleted');
 						});
 						fs.unlink('a.out', (err) => {
 							if (err) return console.error(err);
-							console.log('a.out');
+							console.log('a.out deleted');
 						});
         			})
-    			}
+    			} else {
+					response.send(String(buf));
+				}
 			})
 		}
 	});
