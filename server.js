@@ -23,26 +23,28 @@ function OnCompile(request, response) {
     fs.writeFile(name + '.cpp', request.body.code, (err) => {
   		if (err) return console.error(err);
    		else {
-    		var compile = spawn('g++',['temp.cpp']);
+    		var compile = spawn('g++',[name + '.cpp']);
 			var buf = '';
 	
 			compile.stdout.on('data', (data) => {
     			console.log('stdout: ' + data);
 			});
 			compile.stderr.on('data', (data) => {
-				console.log(String(data));
-				buf += data;
-			});
-			compile.stderr.on('close', (data) => {
-				fs.unlink('temp.cpp', (err) => {
+				fs.unlink(name + '.cpp', (err) => {
 					if (err) return console.error(err);
 					console.log('temp.cpp deleted (error)');
-				});
-			})
+				})	
+				console.log(String(data));
+				buf += data;		
+			});
 			compile.on('close', (data) => {
     			if (data === 0) {
         			var run = spawn('./' + name + '.out', []);
-        	
+
+					if(request.body.input != '') {
+						run.stdin.write(request.body.input);
+						run.stdin.end();
+					}        	
         			run.stdout.on('data', (output) => {
             			console.log(String(output));
             			buf += output;
