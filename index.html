@@ -12,23 +12,22 @@
 </head>
 <body>
 
-<div id="editor">program HW
-begin
-    writeln("HW");
-end;
-</div>
+<div id="editor">#include <iostream.h>
+int main()
+{
+    cout << "HelloWorld";
+    return 0;
+}</div>
 
 <button onclick="SendCode()" id="button">Send</button>
 
 <textarea id="output" disabled="disabled"></textarea>
 
-<script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+noconflict/mode-pascal.js+noconflict/snippets/pascal.js+min/theme-monokai.js+noconflict/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+min/mode-c_cpp.js+min/snippets/c_cpp.js+min/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
 <script>
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/pascal");
-
-    textarea.value = "";
+    editor.getSession().setMode("ace/mode/c_cpp");
 
     function SendCode(){
         var xhr = new XMLHttpRequest();
@@ -40,7 +39,7 @@ end;
 
         var textarea = document.getElementById("output");
 
-        xhr.onreadystatechange = function() { // (3)
+        xhr.onreadystatechange = function() {
             if (xhr.readyState != 4) return;
 
             button.innerHTML = "Send";
