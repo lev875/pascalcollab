@@ -39,6 +39,7 @@ function OnCompile(request, response) {
         			});
         			run.stderr.on('data', function (output) {
             			console.log(String(output));
+            			response.send(output);
         			});
         			run.on('close', function (output) {
             			console.log('stdout: ' + output);
