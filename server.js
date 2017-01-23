@@ -4,6 +4,7 @@ var path       = require('path');
 var bodyParser = require('body-parser')
 var spawn      = require('child_process').spawn;
 var fs         = require('fs');
+var shortid    = require('shortid');
 
 app.set('port', (process.env.PORT || 8080));
 
@@ -18,7 +19,8 @@ function OnRequest(request, response){
 }
 
 function OnCompile(request, response) {
-    fs.writeFile('temp.cpp', request.body.code, (err) => {
+	var name = shortid.generate();
+    fs.writeFile(name + '.cpp', request.body.code, (err) => {
   		if (err) return console.error(err);
    		else {
     		var compile = spawn('g++',['temp.cpp']);
@@ -39,7 +41,7 @@ function OnCompile(request, response) {
 			})
 			compile.on('close', (data) => {
     			if (data === 0) {
-        			var run = spawn('./a.out', []);
+        			var run = spawn('./' + name + '.out', []);
         	
         			run.stdout.on('data', (output) => {
             			console.log(String(output));
@@ -52,11 +54,11 @@ function OnCompile(request, response) {
         			run.on('close', (output) => {
             			console.log('stdout: ' + output);
             			response.send(buf);
-						fs.unlink('temp.cpp', (err) => {
+						fs.unlink(name + '.cpp', (err) => {
 							if (err) return console.error(err);
 							console.log('temp.cpp deleted');
 						});
-						fs.unlink('a.out', (err) => {
+						fs.unlink(name + '.out', (err) => {
 							if (err) return console.error(err);
 							console.log('a.out deleted');
 						});
