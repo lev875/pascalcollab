@@ -20,6 +20,7 @@ function OnRequest(request, response){
 
 function OnCompile(request, response) {
 	var name = shortid.generate();
+
     fs.writeFile(name + '.cpp', request.body.code, (err) => {
   		if (err) return console.error(err);
    		else {
@@ -68,6 +69,7 @@ function OnCompile(request, response) {
     			} else {
 					response.send(String(buf));
 				}
+				setTimeout(function(){ run.kill()}, 5000);
 			})
 		}
 	});
