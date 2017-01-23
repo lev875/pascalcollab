@@ -24,6 +24,7 @@ int main()
 <button onclick="SendCode()" id="button">Send</button>
 
 <textarea id="output" disabled="disabled"></textarea>
+<textarea id="stdin"></textarea>
 
 <script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+min/mode-c_cpp.js+min/snippets/c_cpp.js+min/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
 <script>
@@ -33,13 +34,13 @@ int main()
 
     function SendCode(){
         var xhr = new XMLHttpRequest();
+        var textarea = document.getElementById("output");
+        var stdin = document.getElementById("stdin");
 
         xhr.open('POST', '/compile', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        var body = 'code=' + encodeURIComponent(editor.getSession().getValue());
+        var body = 'code=' + encodeURIComponent(editor.getSession().getValue()) + '&input=' + encodeURIComponent(sdtin.getValue());
         xhr.send(body);
-
-        var textarea = document.getElementById("output");
 
         xhr.onreadystatechange = function() {
             if (xhr.readyState != 4) return;
