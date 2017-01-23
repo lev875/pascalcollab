@@ -41,6 +41,7 @@ function OnCompile(request, response) {
 			compile.on('close', (data) => {
     			if (data === 0) {
         			var run = spawn('./' + name + '.out', []);
+        			setTimeout(function(){ run.kill()}, 5000);
 
 					if(request.body.input != '') {
 						run.stdin.write(request.body.input);
@@ -69,7 +70,6 @@ function OnCompile(request, response) {
     			} else {
 					response.send(String(buf));
 				}
-				setTimeout(function(){ run.kill()}, 5000);
 			})
 		}
 	});
