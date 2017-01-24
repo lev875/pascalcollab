@@ -26,41 +26,6 @@ int main()
 <textarea id="output" disabled="disabled"></textarea>
 
 <script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+min/mode-c_cpp.js+min/snippets/c_cpp.js+min/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
-<script>
-    var editor = ace.edit("editor");
-    var stdin = document.getElementById("stdin");
-    var textarea = document.getElementById("output");
-
-    textarea.value = '';
-    stdin.value = '';
-    editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/c_cpp");
-
-    function SendCode(){
-        var xhr = new XMLHttpRequest();
-
-        xhr.open('POST', '/compile', true);
-	xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-        var body = JSON.stringify({
-		code: String(editor.getSession().getValue()),
-		input: String(stdin.value)
-	});
-        xhr.send(body);
-
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState != 4) return;
-
-            button.innerHTML = "Send";
-            button.disabled = false;
-			var res = JSON.parse(xhr.responseText);
-            textarea.value = 'O: ' + res.output + '\n';
-            if (res.err != '') textarea.value += 'E: ' + res.err;
-			
-        }
-
-        button.innerHTML = 'Loading...';
-        button.disabled = true;
-    }
-</script>
+<script src="compile.js"></script>
 </body>
 </html>
