@@ -44,7 +44,7 @@ function OnCompile(request, response) {
     			if (data === 0) {
         			var run = spawn('./' + name + '.out', []);
 
-        			setTimeout(function(){console.log(name + '.out killed'); run.kill()}, 5000);
+        			setTimeout(() => {console.log(name + '.out killed'); run.kill()}, 5000);
 
 					if(request.body.input != '') {
 						run.stdin.write(request.body.input);
