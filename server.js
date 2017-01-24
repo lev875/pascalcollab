@@ -23,6 +23,7 @@ function OnCompile(request, response) {
 
     fs.writeFile(name + '.cpp', request.body.code, 'utf8', err => {
   		if (err) return console.error(err);
+
    		else {
     		var compile = spawn('g++',['-o', name + '.out', name + '.cpp']);
 			var res = {
@@ -39,6 +40,7 @@ function OnCompile(request, response) {
 			compile.on('close', data => {
 				fs.unlink(name + '.cpp', err => {
 					if (err) return console.error(err);
+					
 					console.log(name + '.cpp deleted');
 				});
     			if (data === 0) {
