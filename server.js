@@ -25,14 +25,17 @@ function OnCompile(request, response) {
   		if (err) return console.error(err);
    		else {
     		var compile = spawn('g++',['-o', name + '.out', name + '.cpp']);
-			var buf = '';
+			var res = {
+				output: '',
+				err: '',
+			};
 	
 			compile.stdout.on('data', (data) => {
     			console.log('stdout: ' + data);
 			});
 			compile.stderr.on('data', (data) => {
-				console.log('stderr: 'data);
-				buf += data;		
+				console.log('stderr: ' + data);
+				res.err += data;		
 			});
 			compile.on('close', (data) => {
 				fs.unlink(name + '.cpp', (err) => {
@@ -50,22 +53,21 @@ function OnCompile(request, response) {
 					}
         			run.stdout.on('data', (output) => {
             			console.log(String(output));
-            			buf += output;
+            			res.output += output;
         			});
         			run.stderr.on('data', (output) => {
             			console.log('stderr: ' + output);
-            			buf += output;
+            			res.err += output;
         			});
         			run.on('close', (output) => {
             			console.log('stdout: ' + output);
-            			response.send(buf);
+            			response.json(res);
 						fs.unlink(name + '.out', (err) => {
 							if (err) return console.error(err);
 							console.log(name + '.out deleted');
 						});
         			})
-    			}
-    			response.send(buf);
+    			} else response.json(res);
 			})
 		}
 	});
