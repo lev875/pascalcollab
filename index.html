@@ -15,7 +15,6 @@
                 width: auto;
                 height: 720px;
                 margin: 0 auto;
-                background-color: white;
             }
             #header {
                 text-align: center;
@@ -34,10 +33,11 @@
                 background: #fff;
             }
             .text {
+                height: 300px;
                 width: 30%;
                 min-width: 10%;
                 float: left;
-                height: 300px;
+                resize: none;
             }
             #button {
                 float: right;
@@ -76,9 +76,9 @@ int main(){
  
                 <textarea id="stdin" class="text"></textarea>
        
-                <textarea id="output" class="text" disabled="disabled"></textarea>
+                <textarea id="output" class="text" readonly="readonly"></textarea>
 
-                <textarea id="errors" class="text" disabled="disabled"></textarea>
+                <textarea id="errors" class="text" readonly="readonly"></textarea>
        
                 <button onclick="SendCode()" id="button">Send</button>
             </div>
