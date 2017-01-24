@@ -34,7 +34,6 @@ function OnCompile(request, response) {
     			console.log('stdout: ' + data);
 			});
 			compile.stderr.on('data', data => {
-				console.log('stderr: ' + data);
 				res.err += data;		
 			});
 			compile.on('close', data => {
@@ -52,15 +51,12 @@ function OnCompile(request, response) {
 						run.stdin.end();
 					}
         			run.stdout.on('data', output => {
-            			console.log(String(output));
             			res.output += output;
         			});
         			run.stderr.on('data', output => {
-            			console.log('stderr: ' + output);
             			res.err += output;
         			});
         			run.on('close', output => {
-            			console.log('stdout: ' + output);
             			response.json(res);
 						fs.unlink(name + '.out', err => {
 							if (err) return console.error(err);

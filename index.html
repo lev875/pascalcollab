@@ -22,7 +22,7 @@
                 padding: 5px;
                 background: #8fa09b;
             }
-            #sidebar {
+            #sidebar {  
                 margin-top: 10px;
                 width: 110px;
                 padding: 0 10px;
@@ -34,7 +34,8 @@
                 background: #fff;
             }
             .text {
-                width: 425px;
+                width: 30%;
+                min-width: 10%;
                 float: left;
                 height: 300px;
             }
@@ -70,7 +71,8 @@ int main(){
     cout &lt;&lt; "Hello World!" &lt;&lt; endl;
 
     return 0;
-}               </div>
+}
+            </div>
  
                 <textarea id="stdin" class="text"></textarea>
        
@@ -83,44 +85,7 @@ int main(){
         </div>
 
         <script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+min/mode-c_cpp.js+min/snippets/c_cpp.js+min/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
-        <script type="text/javascript" charset="utf-8">
-            var editor = ace.edit("editor")
-            var output = document.getElementById("output")
-            var stdin = document.getElementById("stdin")
-            var errors = document.getElementById("errors")
-
-            output.value = ''
-            stdin.value = ''
-            errors.value = '';
-            editor.setTheme("ace/theme/monokai")
-            editor.getSession().setMode("ace/mode/c_cpp")
-
-            function SendCode(){
-                var xhr = new XMLHttpRequest()
-                var body = JSON.stringify({
-                    code: String(editor.getSession().getValue()),
-                    input: String(stdin.value)
-                });
-
-                xhr.open('POST', '/compile', true)
-                xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8')
-                xhr.send(body)
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState != 4) return;
-
-                    button.innerHTML = "Send"
-                    button.disabled = false
-                    var res = JSON.parse(xhr.responseText)
-                    output.value = String(res.output)
-                    if (res.err != '') errors.value = res.err
-                    
-                }
-
-                button.innerHTML = 'Loading...'
-                button.disabled = true
-                setTimeout(() => {button.innerHTML = "Send"; button.disabled = false}, 6500)
-            }
-    </script>
+        <script src="compile.js" type=""application/javascript"" charset="utf-8"></script>
 
     </body>
 </html>
