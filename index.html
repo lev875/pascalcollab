@@ -91,6 +91,7 @@ int main(){
 
             output.value = ''
             stdin.value = ''
+            errors.value = '';
             editor.setTheme("ace/theme/monokai")
             editor.getSession().setMode("ace/mode/c_cpp")
 
@@ -111,7 +112,7 @@ int main(){
                     button.disabled = false
                     var res = JSON.parse(xhr.responseText)
                     output.value = String(res.output)
-                    if (res.err != '') errors.value += res.err
+                    if (res.err != '') errors.value = res.err
                     
                 }
 
