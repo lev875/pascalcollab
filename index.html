@@ -142,7 +142,14 @@ int main(){
                     var res = JSON.parse(xhr.responseText)
                     output.value = res.output
                     errors.value = res.err
-                    if(res.output = '' && res.errors != '') errors.style.display = block
+					if(res.output != ''){
+						console.log('Пиздец')
+						output.style.display = 'block'
+					}
+					if(res.output === '' && res.errors != ''){
+						console.log('Блять')
+						errors.style.display = 'block'
+					}
                 }
 
                 button.innerHTML = 'Loading...'
