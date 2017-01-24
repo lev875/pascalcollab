@@ -135,13 +135,14 @@ int main(){
             function sendCode(){
                 var xhr = new XMLHttpRequest()
                 var body = JSON.stringify({
-                    code: String(editor.getSession().getValue()),
-                    input: String(stdin.value)
+                    code: editor.getSession().getValue(),
+                    input: stdin.value
                 });
 
                 output.value = ''
                 stdin.value = ''
                 errors.value = ''
+                
                 xhr.open('POST', '/compile', true)
                 xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8')
                 xhr.send(body)
