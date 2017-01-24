@@ -21,24 +21,27 @@ function OnRequest(request, response){
 function OnCompile(request, response) {
 	var name = shortid.generate();
 
-    fs.writeFile(name + '.cpp', request.body.code, (err) => {
+    fs.writeFile(name + '.cpp', request.body.code, 'utf8', (err) => {
   		if (err) return console.error(err);
    		else {
-    		var compile = spawn('g++',['-o', name + '.out', name + '.cpp']);
-			var buf = '';
+    		var compile = spawn('g++',['-o', name + '.out', name + '.cpp', '-Werror']);
+			var res = {
+				output: '',
+				errors: ''
+			};
 	
 			compile.stdout.on('data', (data) => {
     			console.log('stdout: ' + data);
 			});
 			compile.stderr.on('data', (data) => {
-				fs.unlink(name + '.cpp', (err) => {
-					if (err) return console.error(err);
-					console.log('temp.cpp deleted (error)');
-				})	
 				console.log(String(data));
-				buf += data;		
+				res.errors += data;		
 			});
 			compile.on('close', (data) => {
+				fs.unlink(name + '.cpp', (err) => {
+					if (err) return console.error(err);
+					console.log(name + '.cpp deleted');
+				});
     			if (data === 0) {
         			var run = spawn('./' + name + '.out', []);
         			setTimeout(function(){console.log(name + '.out killed'); run.kill()}, 5000);
@@ -49,27 +52,21 @@ function OnCompile(request, response) {
 					}        	
         			run.stdout.on('data', (output) => {
             			console.log(String(output));
-            			buf += output;
+            			res.output += output;
         			});
         			run.stderr.on('data', (output) => {
             			console.log(String(output));
-            			buf += output;
+            			res.errors += output;
         			});
         			run.on('close', (output) => {
             			console.log('stdout: ' + output);
-            			response.send(buf);
-						fs.unlink(name + '.cpp', (err) => {
-							if (err) return console.error(err);
-							console.log(name + '.cpp deleted');
-						});
+            			response.send(JSON.stringify(res));
 						fs.unlink(name + '.out', (err) => {
 							if (err) return console.error(err);
 							console.log(name + '.out deleted');
 						});
         			})
-    			} else {
-					response.send(String(buf));
-				}
+    			} response.send(JSON.stringify(res));
 			})
 		}
 	});
