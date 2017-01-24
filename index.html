@@ -29,13 +29,16 @@ int main()
 <script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+min/mode-c_cpp.js+min/snippets/c_cpp.js+min/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
 <script>
     var editor = ace.edit("editor");
+    var stdin = document.getElementById("stdin");
+    var textarea = document.getElementById("output");
+
+    textarea.value = '';
+    stdin.value = '';
     editor.setTheme("ace/theme/monokai");
     editor.getSession().setMode("ace/mode/c_cpp");
 
     function SendCode(){
         var xhr = new XMLHttpRequest();
-        var textarea = document.getElementById("output");
-        var stdin = document.getElementById("stdin");
 
         xhr.open('POST', '/compile', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -50,7 +53,7 @@ int main()
             textarea.value = xhr.responseText;
         }
 
-        button.innerHTML = 'Loading';
+        button.innerHTML = 'Loading...';
         button.disabled = true;
     }
 </script>
