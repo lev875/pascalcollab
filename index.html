@@ -40,6 +40,9 @@
                 resize: none;
                 display: none;
             }
+            .tabs{
+                padding: 0;
+            }
             .tabs > li {
                 list-style-type: none;
                 display: inline;
@@ -90,7 +93,7 @@ int main(){
             </div>
                 
                  <ul class="tabs">
-                    <li><a href="javascript:void(0)" onclick="changeTab('stdin')" id="selected" class="stdinL">Stdin</a></li>
+                    <li><a href="javascript:void(0)" onclick="changeTab('stdin')" id="selected" class="stdinL">Input</a></li>
                     <li><a href="javascript:void(0)" onclick="changeTab('output')" class="outputL">Output</a></li>
                     <li><a href="javascript:void(0)" onclick="changeTab('errors')" class="errorsL">Errors</a></li>
                 </ul>
