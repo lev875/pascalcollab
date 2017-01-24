@@ -53,7 +53,8 @@ int main()
             button.innerHTML = "Send";
             button.disabled = false;
 			var res = JSON.parse(xhr.responseText);
-            textarea.value = 'O: ' + res.output + '\nE: ' + res.err;
+            textarea.value = 'O: ' + res.output + '\n';
+            if (res.err != '') textarea.value += 'E: ' + res.err;
 			
         }
 
