@@ -97,6 +97,7 @@ int main(){
                     <li><a href="javascript:void(0)" onclick="changeTab('output')" class="outputL">Output</a></li>
                     <li><a href="javascript:void(0)" onclick="changeTab('errors')" class="errorsL">Errors</a></li>
                 </ul>
+
                 <textarea id="stdin" class="tab"></textarea>
                 <textarea id="output" class="tab" readonly="readonly"></textarea>
                 <textarea id="errors" class="tab" readonly="readonly"></textarea>
@@ -109,24 +110,26 @@ int main(){
         <script type=""application/javascript"" charset="utf-8">
             var editor = ace.edit("editor")
             var output = document.getElementById("output")
-            var stdin = document.getElementById("stdin")
+            var stdin  = document.getElementById("stdin")
             var errors = document.getElementById("errors")
 
-            output.value = ''
-            stdin.value = ''
-            errors.value = ''
             editor.setTheme("ace/theme/monokai")
             editor.getSession().setMode("ace/mode/c_cpp")
+            output.value = ''
+            stdin.value  = ''
+            errors.value = ''
             
             function changeTab(tabName){
                 var i
                 var x = document.getElementsByClassName("tab")
-                document.getElementById('selected').id = ''
-                document.getElementsByClassName(tabName + 'L')[0].id = 'selected'
+
                 for (i = 0; i < x.length; i++) {
                     x[i].style.display = 'none'
                 }
+
                 document.getElementById(tabName).style.display = "block"
+                document.getElementById('selected').id = ''
+                document.getElementsByClassName(tabName + 'L')[0].id = 'selected'
             }
 
             function sendCode(){
