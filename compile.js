@@ -1,35 +1,35 @@
-    var editor = ace.edit("editor");
-    var stdin = document.getElementById("stdin");
-    var textarea = document.getElementById("output");
+    var editor = ace.edit("editor")
+    var output = document.getElementById("output")
+    var stdin = document.getElementById("stdin")
+    var errors = document.getElementById("errors")
 
-    textarea.value = '';
-    stdin.value = '';
-    editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/c_cpp");
+    output.value = ''
+    stdin.value = ''
+    editor.setTheme("ace/theme/monokai")
+    editor.getSession().setMode("ace/mode/c_cpp")
 
     function SendCode(){
-        var xhr = new XMLHttpRequest();
-
-        xhr.open('POST', '/compile', true);
-	xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        var xhr = new XMLHttpRequest()
         var body = JSON.stringify({
-		code: String(editor.getSession().getValue()),
-		input: String(stdin.value)
-	});
-        xhr.send(body);
+            code: String(editor.getSession().getValue()),
+            input: String(stdin.value)
+        });
 
+        xhr.open('POST', '/compile', true)
+        xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8')
+        xhr.send(body)
         xhr.onreadystatechange = function() {
             if (xhr.readyState != 4) return;
 
-            button.innerHTML = "Send";
-            button.disabled = false;
-			var res = JSON.parse(xhr.responseText);
-            textarea.value = 'O: ' + res.output + '\n';
-            if (res.err != '') textarea.value += 'E: ' + res.err;
+            button.innerHTML = "Send"
+            button.disabled = false
+			var res = JSON.parse(xhr.responseText)
+            output.value = String(res.output)
+            if (res.err != '') errors.value += res.err
 			
         }
 
-        button.innerHTML = 'Loading...';
-        button.disabled = true;
-        setTimeout(() => {button.innerHTML = "Send"; button.disabled = false;}, 6500);
+        button.innerHTML = 'Loading...'
+        button.disabled = true
+        setTimeout(() => {button.innerHTML = "Send"; button.disabled = false}, 6500)
     }

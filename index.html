@@ -1,31 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<title>ACE in Action</title>
-<style type="text/css" media="screen">
-    #editor { 
-        height: 40vh;
-        width: 96vw;
-        margin-bottom: 10px;
-    }
-</style>
-</head>
-<body>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Исторический турнир</title>
+        <style type="text/css">
+            body {
+                font: 10pt Arial, Helvetica, sans-serif; /* Шрифт на веб-странице */
+                background: #e1dfb9; /* Цвет фона */
+            }
+            h2 {
+                margin-top: 0;
+            }
+            #container {
+                width: auto;
+                height: 720px;
+                margin: 0 auto;
+                background-color: white;
+            }
+            #header {
+                text-align: center;
+                padding: 5px;
+                background: #8fa09b;
+            }
+            #sidebar {
+                margin-top: 10px;
+                width: 110px;
+                padding: 0 10px;
+                float: left;
+            }
+            #content {
+                margin-left: 130px;
+                padding: 10px;
+                background: #fff;
+            }
+            .text {
+                width: 425px;
+                float: left;
+                height: 300px;
+            }
+            #button {
+                float: right;
+                background-color: green;
+            }
+         
+            #editor {
+                height: 40vh;
+                width: 96vw;
+                margin-bottom: 10px;
+                width: auto;
+            }
+        </style>
+    </head>
+    <body>
 
-<div id="editor">#include &lt;iostream&gt;
+        <div id="container">
+            <div id="header">Бессмысленное и беспощедное дерьмо</div>
+            <div id="sidebar">
+                <p><a href="hui.html">Первый пункт меню</a></p>
+                <p><a href="hui.html">Второй пункт меню</a></p>
+                <p><a href="hui.html">Третий пункт меню</a></p>
+            </div>
+            <div id="content">
+                <div id="editor">#include &lt;iostream&gt;
 
 using namespace std;
 
-int main()
-{
+int main(){
+
     cout &lt;&lt; "Hello World!" &lt;&lt; endl;
-}</div>
 
-<textarea id="stdin"></textarea>
-<button onclick="SendCode()" id="button">Send</button>
-<textarea id="output" disabled="disabled"></textarea>
+    return 0;
+}               </div>
+ 
+                <textarea id="stdin" class="text"></textarea>
+       
+                <textarea id="output" class="text" disabled="disabled"></textarea>
 
-<script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+min/mode-c_cpp.js+min/snippets/c_cpp.js+min/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
-<script src="compile.js"></script>
-</body>
+                <textarea id="errors" class="text" disabled="disabled"></textarea>
+       
+                <button onclick="SendCode()" id="button">Send</button>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+min/mode-c_cpp.js+min/snippets/c_cpp.js+min/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
+        <script src="compile.js"></script>
+
+    </body>
 </html>
