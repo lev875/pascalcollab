@@ -25,7 +25,7 @@ function OnCompile(request, response) {
   		if (err) return console.error(err);
    		else {
    			try {
-    			var compile = spawn(__dirname+'/.apt/usr/bin/ppcx64-2.6.2', [name + '.pas']);
+    			var compile = spawn('/app/.apt/usr/bin/ppcx64-2.6.2', [name + '.pas']);
     		}
     		catch (err) {
     			console.error(err)
