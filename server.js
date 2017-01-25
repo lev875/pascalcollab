@@ -1,9 +1,10 @@
 var express    = require('express');
 var app        = express();
-var path       = require("path");
+var path       = require('path');
 var bodyParser = require('body-parser')
 var spawn      = require('child_process').spawn;
 var fs         = require('fs');
+var shortid    = require('shortid');
 
 app.set('port', (process.env.PORT || 8080));
 
@@ -18,46 +19,88 @@ function OnRequest(request, response){
 }
 
 function OnCompile(request, response) {
-    fs.writeFile('temp.pas', request.body.code, (err) => {
+	var name = shortid.generate();
+
+    fs.writeFile(name + '.pas', request.body.code, 'utf8', err => {
   		if (err) return console.error(err);
    		else {
-    		var compile = spawn('fpc',['temp.pas']);
+    		var compile = spawn('fpc', [name + '.pas']);
+			var res = {
+				output: '',
+				err: '',
+				ErrorsParse: function (name) {
+					var x = this.err.split('\n')
+					var i
 	
-			compile.stdout.on('data', function (data) {
+					for (i = 0; i < x.length; i++) {
+						if(x[i].search(name + '.pas\\(') === -1) {
+							x.splice(i,1)
+							i--;
+						}
+				  	}
+					for (i = 0; i < x.length; i++) {
+						x[i] = x[i].slice(name.length + 4)
+					}
+					this.err = x.join('\n')
+				}
+			};
+	
+			compile.stdout.on('data', data => {
     			console.log('stdout: ' + data);
+				res.err += data;
 			});
-			compile.stderr.on('data', function (data) {
-    			console.log(String(data));
+			compile.stderr.on('data', data => {
+				res.err += data;		
 			});
-			compile.on('close', function (data) {
+			compile.on('close', data => {
+				fs.unlink(name + '.pas', err => {
+					if (err) return console.error(err);
+					console.log(name + '.pas deleted');
+				});
+				fs.unlink(name + '.o', err => {
+					if (err) return console.error(err);
+					console.log(name + '.o deleted');
+				});
     			if (data === 0) {
-        			var run = spawn('./temp', []);
-        	
-        			run.stdout.on('data', function (output) {
-            			console.log(String(output));
-            			response.send(output);
+        			var run = spawn('./' + name, []);
+
+        			setTimeout(() => {console.log(name + ' killed'); run.kill()}, 5000);
+
+					if(request.body.input != '') {
+						run.stdin.write(request.body.input);
+						run.stdin.end();
+					}
+        			run.stdout.on('data', output => {
+            			res.output += output;
         			});
-        			run.stderr.on('data', function (output) {
-            			console.log(String(output));
-            			response.send(output);
+        			run.stderr.on('data', output => {
+            			res.err += output;
         			});
-        			run.on('close', function (output) {
-            			console.log('stdout: ' + output);
-						fs.unlink('temp.pas', (err) => {
+        			run.on('close', output => {
+						res.ErrorsParse(name)
+						response.json(res)
+						fs.unlink(name, err => {
 							if (err) return console.error(err);
-							console.log('temp.cpp');
-						});
-						fs.unlink('a.out', (err) => {
-							if (err) return console.error(err);
-							console.log('temp');
+							console.log(name + ' deleted');
 						});
         			})
-    			}
+    			} else {
+					res.ErrorsParse(name)
+					response.json(res)
+				}
 			})
 		}
 	});
 }
 
-app.get('/', OnRequest).listen(app.get('port'));
+app.get('/', OnRequest).listen(app.get('port'))
 
-app.post('/compile', OnCompile);
+app.get('/assets/styles.css', (request, response) => {
+	response.sendFile(path.join(__dirname+'/assets/styles.css'))
+})
+
+app.get('/assets/scripts.js', (request, response) => {
+	response.sendFile(path.join(__dirname+'/assets/scripts.js'))
+})
+
+app.post('/compile', OnCompile)

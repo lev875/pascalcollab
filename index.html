@@ -1,53 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<title>ACE in Action</title>
-<style type="text/css" media="screen">
-    #editor { 
-        height: 40vh;
-        width: 96vw;
-        margin-bottom: 10px;
-    }
-</style>
-</head>
-<body>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Исторический турнир</title>
+        <link rel="stylesheet" type="text/css" href="/assets/styles.css">
+    </head>
+    <body>
 
-<div id="editor">program HelloWorld;
-    begin
-        writeln('Hello World!');
-    end.</div>
+        <div id="container">
+            <div id="header">Бессмысленное и беспощедное дерьмо</div>
+            <div id="sidebar">
+                <p><a href="hui.html">Первый пункт меню</a></p>
+                <p><a href="hui.html">Второй пункт меню</a></p>
+                <p><a href="hui.html">Третий пункт меню</a></p>
+            </div>
+            <div id="content">
+                <div id="editor">program HelloWorld
+begin
+    writeln('Hello World!');
+end.
+                </div>
+                
+                 <ul class="tabs">
+                    <li id="selected" class="stdinL"><a href="javascript:void(0)" onclick="changeTab('stdin')">Input</a></li>
+                    <li class="outputL"><a href="javascript:void(0)" onclick="changeTab('output')">Output</a></li>
+                    <li class="errorsL"><a href="javascript:void(0)" onclick="changeTab('errors')">Errors</a></li>
+                </ul>
+                <div> <!--Тут контейнер!!!-->
+                    <textarea id="stdin" class="tab"></textarea>
+                    <textarea id="output" class="tab" readonly="readonly"></textarea>
+                    <textarea id="errors" class="tab" readonly="readonly"></textarea>
 
-<button onclick="SendCode()" id="button">Send</button>
+                    <button onclick="sendCode()" id="button">Send</button>
+                </div>
+            </div>
+        </div>
 
-<textarea id="output" disabled="disabled"></textarea>
+        <script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+min/mode-c_cpp.js+min/snippets/c_cpp.js+min/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
+        <script src="/assets/scripts.js" type=""application/javascript"" charset="utf-8"></script>
 
-<script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+min/mode-c_cpp.js+min/snippets/c_cpp.js+min/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
-<script>
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/c_cpp");
-
-    function SendCode(){
-        var xhr = new XMLHttpRequest();
-
-        xhr.open('POST', '/compile', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        var body = 'code=' + encodeURIComponent(editor.getSession().getValue());
-        xhr.send(body);
-
-        var textarea = document.getElementById("output");
-
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState != 4) return;
-
-            button.innerHTML = "Send";
-            button.disabled = false;
-            textarea.value = xhr.responseText;
-        }
-
-        button.innerHTML = 'Loading';
-        button.disabled = true;
-    }
-</script>
-</body>
+    </body>
 </html>
