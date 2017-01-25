@@ -25,10 +25,10 @@ function OnCompile(request, response) {
   		if (err) return console.error(err);
    		else {
    			try {
-    			var compile = spawn('fpc', [name + '.pas']);
+    			var compile = spawn(__dirname+'/.apt/usr/bin/ppcx64-2.6.2', [name + '.pas']);
     		}
     		catch (err) {
-    			console.log(err)
+    			console.error(err)
     		}
 			var res = {
 				output: '',
