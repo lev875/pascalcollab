@@ -82,7 +82,7 @@ function OnCompile(request, response) {
             			res.err += output;
         			});
         			run.on('close', output => {
-						res.ErrorsParse(name)
+						//res.ErrorsParse(name)
 						response.json(res)
 						fs.unlink(name, err => {
 							if (err) return console.error(err);
@@ -90,7 +90,7 @@ function OnCompile(request, response) {
 						});
         			})
     			} else {
-					res.ErrorsParse(name)
+					//res.ErrorsParse(name)
 					response.json(res)
 				}
 			})

@@ -4,7 +4,7 @@ var stdin  = document.getElementById("stdin")
 var errors = document.getElementById("errors")
 
 editor.setTheme("ace/theme/monokai")
-editor.getSession().setMode("ace/mode/c_cpp")
+editor.getSession().setMode("ace/mode/pascal")
 output.value = ''
 stdin.value  = ''
 errors.value = ''
