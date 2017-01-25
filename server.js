@@ -21,10 +21,10 @@ function OnRequest(request, response){
 function OnCompile(request, response) {
 	var name = shortid.generate();
 
-    fs.writeFile(name + '.cpp', request.body.code, 'utf8', err => {
+    fs.writeFile(name + '.pas', request.body.code, 'utf8', err => {
   		if (err) return console.error(err);
    		else {
-    		var compile = spawn('g++',['-o', name + '.out', name + '.cpp']);
+    		var compile = spawn('fpc', [name + '.pas']);
 			var res = {
 				output: '',
 				err: '',
@@ -32,19 +32,24 @@ function OnCompile(request, response) {
 	
 			compile.stdout.on('data', data => {
     			console.log('stdout: ' + data);
+				res.output += data;
 			});
 			compile.stderr.on('data', data => {
 				res.err += data;		
 			});
 			compile.on('close', data => {
-				fs.unlink(name + '.cpp', err => {
+				fs.unlink(name + '.pas', err => {
 					if (err) return console.error(err);
-					console.log(name + '.cpp deleted');
+					console.log(name + '.pas deleted');
+				});
+				fs.unlink(name + '.o', err => {
+					if (err) return console.error(err);
+					console.log(name + '.o deleted');
 				});
     			if (data === 0) {
-        			var run = spawn('./' + name + '.out', []);
+        			var run = spawn('./' + name, []);
 
-        			setTimeout(() => {console.log(name + '.out killed'); run.kill()}, 5000);
+        			setTimeout(() => {console.log(name + ' killed'); run.kill()}, 5000);
 
 					if(request.body.input != '') {
 						run.stdin.write(request.body.input);
@@ -57,13 +62,17 @@ function OnCompile(request, response) {
             			res.err += output;
         			});
         			run.on('close', output => {
-            			response.json(res);
-						fs.unlink(name + '.out', err => {
+            			response.json(res)
+						console.log(res)
+						fs.unlink(name, err => {
 							if (err) return console.error(err);
-							console.log(name + '.out deleted');
+							console.log(name + ' deleted');
 						});
         			})
-    			} else response.json(res);
+    			} else {
+					response.json(res);
+					console.log(res)
+				}
 			})
 		}
 	});
