@@ -28,11 +28,26 @@ function OnCompile(request, response) {
 			var res = {
 				output: '',
 				err: '',
+				ErrorsParse: function (name) {
+					var x = this.err.split('\n')
+					var i
+	
+					for (i = 0; i < x.length; i++) {
+						if(x[i].search(name + '.pas\\(') === -1) {
+							x.splice(i,1)
+							i--;
+						}
+				  	}
+					for (i = 0; i < x.length; i++) {
+						x[i] = x[i].slice(name.length + 4)
+					}
+					this.err = x.join('\n')
+				}
 			};
 	
 			compile.stdout.on('data', data => {
     			console.log('stdout: ' + data);
-				res.output += data;
+				res.err += data;
 			});
 			compile.stderr.on('data', data => {
 				res.err += data;		
@@ -62,30 +77,30 @@ function OnCompile(request, response) {
             			res.err += output;
         			});
         			run.on('close', output => {
-            			response.json(res)
-						console.log(res)
+						res.ErrorsParse(name)
+						response.json(res)
 						fs.unlink(name, err => {
 							if (err) return console.error(err);
 							console.log(name + ' deleted');
 						});
         			})
     			} else {
-					response.json(res);
-					console.log(res)
+					res.ErrorsParse(name)
+					response.json(res)
 				}
 			})
 		}
 	});
 }
 
-app.get('/', OnRequest).listen(app.get('port'));
+app.get('/', OnRequest).listen(app.get('port'))
 
 app.get('/assets/styles.css', (request, response) => {
-	response.sendFile(path.join(__dirname+'/assets/styles.css'));
+	response.sendFile(path.join(__dirname+'/assets/styles.css'))
 })
 
 app.get('/assets/scripts.js', (request, response) => {
-	response.sendFile(path.join(__dirname+'/assets/scripts.js'));
+	response.sendFile(path.join(__dirname+'/assets/scripts.js'))
 })
 
-app.post('/compile', OnCompile);
+app.post('/compile', OnCompile)
