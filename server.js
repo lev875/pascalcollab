@@ -24,7 +24,12 @@ function OnCompile(request, response) {
     fs.writeFile(name + '.pas', request.body.code, 'utf8', err => {
   		if (err) return console.error(err);
    		else {
-    		var compile = spawn('fpc', [name + '.pas']);
+   			try {
+    			var compile = spawn('fpc', [name + '.pas']);
+    		}
+    		catch (err) {
+    			console.log(err)
+    		}
 			var res = {
 				output: '',
 				err: '',
