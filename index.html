@@ -51,28 +51,26 @@
                 width: auto;
             }
         </style>
+                <!-- Firebase -->
+        <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+
+        <!-- Ace -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js"></script>
+
+        <!-- Firepad -->
+        <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" />
+        <script src="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.min.js"></script>
     </head>
-    <body>
+    <body onload="init()">
 
         <div id="container">
             <div id="header">Бессмысленное и беспощедное дерьмо</div>
             <div id="sidebar">
-                <p><a href="hui.html">Первый пункт меню</a></p>
-                <p><a href="hui.html">Второй пункт меню</a></p>
-                <p><a href="hui.html">Третий пункт меню</a></p>
+                <p><button>Example 1</button></p>
+                <p><button>Example 2</button></p>
             </div>
             <div id="content">
-                <div id="editor">#include &lt;iostream&gt;
-
-using namespace std;
-
-int main(){
-
-    cout &lt;&lt; "Hello World!" &lt;&lt; endl;
-
-    return 0;
-}
-            </div>
+                <div id="editor"></div>
  
                 <textarea id="stdin" class="text"></textarea>
        
@@ -96,6 +94,42 @@ int main(){
             errors.value = ''
             editor.setTheme("ace/theme/monokai")
             editor.getSession().setMode("ace/mode/c_cpp")
+
+            function init() {
+                // Initialize Firebase.
+                // TODO: replace with your Firebase project configuration.
+                var config = {
+                    apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
+                    authDomain: "pascalcollab.firebaseapp.com",
+                    databaseURL: "https://pascalcollab.firebaseio.com",
+                    storageBucket: "pascalcollab.appspot.com",
+                    messagingSenderId: "363266799523"
+                };
+
+                firebase.initializeApp(config);
+
+                // Get Firebase Database reference.
+                var firepadRef = firebase.database().ref();
+
+                // Create Firepad.
+                var firepad = Firepad.fromACE(firepadRef, editor, {
+                    defaultText: '#include <iostream>;\r\n\r\nusing namespace std;\r\n\r\nint main(){\r\n\r\n    cout << \"Hello World!\" << endl;\r\n\r\n    return 0;\r\n}\r\n'
+                });
+            }
+
+            function getExampleRef() {
+                var ref = firebase.database().ref();
+                var hash = window.location.hash.replace(/#/g, '');
+                if (hash) {
+                    ref = ref.child(hash);
+                } else {
+                    ref = ref.push(); // generate unique location.
+                    window.location = window.location + '#' + ref.key; // add it as a hash to the URL.
+                    console.log(window.location)
+                }
+                console.log('Firebase data: ', ref.toString());
+                return ref;
+            }
 
             function SendCode(){
                 var xhr = new XMLHttpRequest()
