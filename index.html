@@ -3,55 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>PascalCollab</title>
-        <style type="text/css">
-            body {
-                font: 10pt Arial, Helvetica, sans-serif; /* Шрифт на веб-странице */
-                background: #e1dfb9; /* Цвет фона */
-            }
-            h2 {
-                margin-top: 0;
-            }
-            #container {
-                width: auto;
-                height: 720px;
-                margin: 0 auto;
-            }
-            #header {
-                text-align: center;
-                padding: 5px;
-                background: #8fa09b;
-            }
-            #sidebar {  
-                margin-top: 10px;
-                width: 110px;
-                padding: 0 10px;
-                float: left;
-            }
-            #content {
-                margin-left: 130px;
-                padding: 10px;
-                background: #fff;
-            }
-            .text {
-                height: 300px;
-                width: 30%;
-                min-width: 10%;
-                float: left;
-                resize: none;
-            }
-            #button {
-                float: right;
-                background-color: green;
-            }
-         
-            #editor {
-                height: 40vh;
-                width: 96vw;
-                margin-bottom: 10px;
-                width: auto;
-            }
-        </style>
-                <!-- Firebase -->
+
         <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
 
         <!-- Ace -->
@@ -62,6 +14,9 @@
         <!-- Firepad -->
         <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" />
         <script src="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="/assets/styles.css">
+
     </head>
     <body onLoad="init()">
 
@@ -74,47 +29,47 @@
             <div id="content">
                 <div id="editor"></div>
  
-                <textarea id="stdin" class="text"></textarea>
-       
-                <textarea id="output" class="text" readonly="readonly"></textarea>
+                <ul class="tabs">
+                    <li id="selected" class="stdinL"><a href="javascript:void(0)" onclick="changeTab('stdin')">Input</a></li>
+                    <li class="outputL"><a href="javascript:void(0)" onclick="changeTab('output')">Output</a></li>
+                    <li class="errorsL"><a href="javascript:void(0)" onclick="changeTab('errors')">Errors</a></li>
+                </ul>
+                <div> <!--Тут контейнер!!!-->
+                    <textarea id="stdin" class="tab"></textarea>
+                    <textarea id="output" class="tab" readonly="readonly"></textarea>
+                    <textarea id="errors" class="tab" readonly="readonly"></textarea>
 
-                <textarea id="errors" class="text" readonly="readonly"></textarea>
-       
-                <button onclick="SendCode()" id="button">Send</button>
+                    <button onclick="sendCode()" id="button">Send</button>
+                </div>
             </div>
         </div>
 
-        <script type="application/javascript" charset="utf-8">
-            var output = document.getElementById("output")
-            var stdin = document.getElementById("stdin")
-            var errors = document.getElementById("errors")
-            var editor = ace.edit("editor")
+        <script type="text/javascript">
+            var output = document.getElementById("output");
+            var stdin = document.getElementById("stdin");
+            var errors = document.getElementById("errors");
+            var editor = ace.edit("editor");
             var session = editor.getSession();
             session.setUseWrapMode(true);
             session.setUseWorker(false);
-            editor.setTheme("ace/theme/monokai")
-            editor.getSession().setMode("ace/mode/c_cpp")
+            editor.setTheme("ace/theme/monokai");
+            editor.getSession().setMode("ace/mode/c_cpp");
 
             output.value = ''
             stdin.value = ''
             errors.value = ''
 
-            var firepad
+            var firepad;
+            var firepadRef;
+            
             function init() {
-                // Initialize Firebase.
-                // TODO: replace with your Firebase project configuration.
                 var config = {
                     apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
                     authDomain: "pascalcollab.firebaseapp.com",
                     databaseURL: "https://pascalcollab.firebaseio.com"
                 };
-
                 firebase.initializeApp(config);
-
-                // Get Firebase Database reference.
-                var firepadRef = getExampleRef();
-
-                // Create Firepad.
+                firepadRef = getExampleRef();
                 firepad = Firepad.fromACE(firepadRef, editor, {
                     defaultText: '#include <iostream>;\r\n\r\nusing namespace std;\r\n\r\nint main(){\r\n\r\n    cout << \"Hello World!\" << endl;\r\n\r\n    return 0;\r\n}\r\n'
                 });
@@ -141,7 +96,6 @@
                     firepad.dispose()
                     editor.setValue('')
                     firepad = Firepad.fromACE(firepadRef, editor)
-                    console.log(window.location)
                 }
             }
 
@@ -153,8 +107,20 @@
                     firepad.dispose()
                     editor.setValue('')
                     firepad = Firepad.fromACE(firepadRef, editor)
-                    console.log(window.location)
                 }
+            }
+
+            function changeTab(tabName){
+                var i
+                var x = document.getElementsByClassName("tab")
+
+                for (i = 0; i < x.length; i++) {
+                    x[i].style.display = 'none'
+                }
+
+                document.getElementById(tabName).style.display = "block"
+                document.getElementById('selected').id = ''
+                document.getElementsByClassName(tabName + 'L')[0].id = 'selected'
             }
 
             function SendCode(){
@@ -184,7 +150,6 @@
                 button.disabled = true
                 setTimeout(() => {button.innerHTML = "Send"; button.disabled = false}, 6500)
             }
-    </script>
-
+        </script>
     </body>
 </html>

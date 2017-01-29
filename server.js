@@ -71,6 +71,14 @@ function OnCompile(request, response) {
 	});
 }
 
-app.get('/', OnRequest).listen(app.get('port'));
+app.get('/', OnRequest).listen(app.get('port'))
 
-app.post('/compile', OnCompile);
+app.get('/assets/styles.css', (request, response) => {
+	response.sendFile(path.join(__dirname+'/assets/styles.css'))
+})
+
+app.get('/assets/scripts.js', (request, response) => {
+	response.sendFile(path.join(__dirname+'/assets/scripts.js'))
+})
+
+app.post('/compile', OnCompile)
