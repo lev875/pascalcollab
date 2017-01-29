@@ -84,7 +84,6 @@
 
         <script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+min/mode-c_cpp.js+min/snippets/c_cpp.js+min/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
         <script type="application/javascript" charset="utf-8">
-            var editor = ace.edit("editor")
             var output = document.getElementById("output")
             var stdin = document.getElementById("stdin")
             var errors = document.getElementById("errors")
@@ -92,8 +91,6 @@
             output.value = ''
             stdin.value = ''
             errors.value = ''
-            editor.setTheme("ace/theme/monokai")
-            editor.getSession().setMode("ace/mode/c_cpp")
 
             function init() {
                 // Initialize Firebase.
@@ -101,15 +98,20 @@
                 var config = {
                     apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
                     authDomain: "pascalcollab.firebaseapp.com",
-                    databaseURL: "https://pascalcollab.firebaseio.com",
-                    storageBucket: "pascalcollab.appspot.com",
-                    messagingSenderId: "363266799523"
+                    databaseURL: "https://pascalcollab.firebaseio.com"
                 };
 
                 firebase.initializeApp(config);
 
                 // Get Firebase Database reference.
                 var firepadRef = firebase.database().ref();
+
+                var editor = ace.edit("editor")
+                var session = editor.getSession();
+                session.setUseWrapMode(true);
+                session.setUseWorker(false);
+                session.setTheme("ace/theme/monokai")
+                session.getSession().setMode("ace/mode/c_cpp")
 
                 // Create Firepad.
                 var firepad = Firepad.fromACE(firepadRef, editor, {
@@ -125,7 +127,7 @@
                 } else {
                     ref = ref.push(); // generate unique location.
                     window.location = window.location + '#' + ref.key; // add it as a hash to the URL.
-                    console.log(window.location)
+                    console.log(window.location + '#' + ref.key)
                 }
                 console.log('Firebase data: ', ref.toString());
                 return ref;
