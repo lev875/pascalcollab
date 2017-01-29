@@ -56,18 +56,20 @@
 
         <!-- Ace -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/mode-c_cpp.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/theme-monokai.js"></script>
 
         <!-- Firepad -->
         <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" />
         <script src="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.min.js"></script>
     </head>
-    <body onload="init()">
+    <body onLoad="init()">
 
         <div id="container">
             <div id="header">Бессмысленное и беспощедное дерьмо</div>
             <div id="sidebar">
-                <p><button>Example 1</button></p>
-                <p><button>Example 2</button></p>
+                <p><button onClick="Ex1()">Example 1</button></p>
+                <p><button onClick="Ex2()">Example 2</button></p>
             </div>
             <div id="content">
                 <div id="editor"></div>
@@ -82,16 +84,22 @@
             </div>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/g/ace@1.2.6(min/ace.js+min/mode-pascal.js+min/snippets/pascal.js+min/mode-c_cpp.js+min/snippets/c_cpp.js+min/theme-monokai.js)" type="text/javascript" charset="utf-8"></script>
         <script type="application/javascript" charset="utf-8">
             var output = document.getElementById("output")
             var stdin = document.getElementById("stdin")
             var errors = document.getElementById("errors")
+            var editor = ace.edit("editor")
+            var session = editor.getSession();
+            session.setUseWrapMode(true);
+            session.setUseWorker(false);
+            editor.setTheme("ace/theme/monokai")
+            editor.getSession().setMode("ace/mode/c_cpp")
 
             output.value = ''
             stdin.value = ''
             errors.value = ''
 
+            var firepad
             function init() {
                 // Initialize Firebase.
                 // TODO: replace with your Firebase project configuration.
@@ -104,17 +112,10 @@
                 firebase.initializeApp(config);
 
                 // Get Firebase Database reference.
-                var firepadRef = firebase.database().ref();
-
-                var editor = ace.edit("editor")
-                var session = editor.getSession();
-                session.setUseWrapMode(true);
-                session.setUseWorker(false);
-                session.setTheme("ace/theme/monokai")
-                session.getSession().setMode("ace/mode/c_cpp")
+                var firepadRef = getExampleRef();
 
                 // Create Firepad.
-                var firepad = Firepad.fromACE(firepadRef, editor, {
+                firepad = Firepad.fromACE(firepadRef, editor, {
                     defaultText: '#include <iostream>;\r\n\r\nusing namespace std;\r\n\r\nint main(){\r\n\r\n    cout << \"Hello World!\" << endl;\r\n\r\n    return 0;\r\n}\r\n'
                 });
             }
@@ -127,10 +128,33 @@
                 } else {
                     ref = ref.push(); // generate unique location.
                     window.location = window.location + '#' + ref.key; // add it as a hash to the URL.
-                    console.log(window.location + '#' + ref.key)
                 }
                 console.log('Firebase data: ', ref.toString());
                 return ref;
+            }
+            
+            function Ex1(){
+                var hash = window.location.hash.replace(/#/g, '');
+                if(hash != '-KbecJaQd_evyTFkLuHV'){
+                    window.location = '#' + '-KbecJaQd_evyTFkLuHV';
+                    firepadRef = getExampleRef();
+                    firepad.dispose()
+                    editor.setValue('')
+                    firepad = Firepad.fromACE(firepadRef, editor)
+                    console.log(window.location)
+                }
+            }
+
+            function Ex2(){
+                var hash = window.location.hash.replace(/#/g, '');
+                if(hash != '-KbeeU8CZgax96b9uk-9'){
+                    window.location = '#' + '-KbeeU8CZgax96b9uk-9';
+                    firepadRef = getExampleRef();
+                    firepad.dispose()
+                    editor.setValue('')
+                    firepad = Firepad.fromACE(firepadRef, editor)
+                    console.log(window.location)
+                }
             }
 
             function SendCode(){
