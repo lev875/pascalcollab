@@ -15,18 +15,24 @@
         <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" />
         <script src="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.min.js"></script>
 
-        <link rel="stylesheet" type="text/css" href="/assets/styles.css">
+        <!--JQuery-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="assets\styles.css">
 
     </head>
     <body onLoad="init()">
-
-        <div id="container">
-            <div id="header">Бессмысленное и беспощедное дерьмо</div>
-            <div id="sidebar">
-                <p><button onClick="Ex1()">Example 1</button></p>
-                <p><button onClick="Ex2()">Example 2</button></p>
+        <div class="header">Pascal collab например</div>
+        <div class="container">
+            <div class="leftcol">
+                <nav>
+                    <span></span>
+                    <ul id="root">
+                    </ul>
+                </nav>
+               
             </div>
-            <div id="content">
+            <div class="content">
                 <div id="editor"></div>
  
                 <ul class="tabs">
@@ -42,122 +48,8 @@
                     <button onClick="sendCode()" id="button">Send</button>
                 </div>
             </div>
+            <div class="rightcol">правая колонка</div>
         </div>
-
-        <script type="text/javascript">
-            var output = document.getElementById("output");
-            var stdin = document.getElementById("stdin");
-            var errors = document.getElementById("errors");
-            var editor = ace.edit("editor");
-            var session = editor.getSession();
-            session.setUseWrapMode(true);
-            session.setUseWorker(false);
-            editor.setTheme("ace/theme/monokai");
-            editor.getSession().setMode("ace/mode/c_cpp");
-
-            output.value = ''
-            stdin.value = ''
-            errors.value = ''
-
-            var firepad;
-            var firepadRef;
-
-            function init() {
-                var config = {
-                    apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
-                    authDomain: "pascalcollab.firebaseapp.com",
-                    databaseURL: "https://pascalcollab.firebaseio.com"
-                };
-                firebase.initializeApp(config);
-                firepadRef = getExampleRef();
-                firepad = Firepad.fromACE(firepadRef, editor, {
-                    defaultText: '#include <iostream>;\r\n\r\nusing namespace std;\r\n\r\nint main(){\r\n\r\n    cout << \"Hello World!\" << endl;\r\n\r\n    return 0;\r\n}\r\n'
-                });
-            }
-
-            function getExampleRef() {
-                var ref = firebase.database().ref();
-                var hash = window.location.hash.replace(/#/g, '');
-                if (hash) {
-                    ref = ref.child(hash);
-                } else {
-                    ref = ref.push(); // generate unique location.
-                    window.location = window.location + '#' + ref.key; // add it as a hash to the URL.
-                }
-                console.log('Firebase data: ', ref.toString());
-                return ref;
-            }
-            
-            function Ex1(){
-                var hash = window.location.hash.replace(/#/g, '');
-                if(hash != '-KbecJaQd_evyTFkLuHV'){
-                    window.location = '#' + '-KbecJaQd_evyTFkLuHV';
-                    firepadRef = getExampleRef();
-                    firepad.dispose()
-                    editor.setValue('')
-                    firepad = Firepad.fromACE(firepadRef, editor)
-                }
-            }
-
-            function Ex2(){
-                var hash = window.location.hash.replace(/#/g, '');
-                if(hash != '-KbeeU8CZgax96b9uk-9'){
-                    window.location = '#' + '-KbeeU8CZgax96b9uk-9';
-                    firepadRef = getExampleRef();
-                    firepad.dispose()
-                    editor.setValue('')
-                    firepad = Firepad.fromACE(firepadRef, editor)
-                }
-            }
-
-            function changeTab(tabName){
-                var i
-                var x = document.getElementsByClassName("tab")
-
-                for (i = 0; i < x.length; i++) {
-                    x[i].style.display = 'none'
-                }
-
-                document.getElementById(tabName).style.display = "block"
-                document.getElementById('selected').id = ''
-                document.getElementsByClassName(tabName + 'L')[0].id = 'selected'
-            }
-
-            
-            function sendCode(){
-                var xhr = new XMLHttpRequest()
-                var body = JSON.stringify({
-                    code: editor.getSession().getValue(),
-                    input: stdin.value
-                });
-
-                output.value = ''
-                stdin.value = ''
-                errors.value = ''
-
-                xhr.open('POST', '/compile', true)
-                xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8')
-                xhr.send(body)
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState != 4) return;
-
-                    button.innerHTML = "Send"
-                    button.disabled = false
-                    var res = JSON.parse(xhr.responseText)
-                    output.value = res.output
-                    errors.value = res.err
-                    if(res.output != ''){
-                        changeTab('output')
-                    }
-                    if(res.output === '' && res.errors != ''){
-                        changeTab('errors')
-                    }
-                }
-
-                button.innerHTML = 'Loading...'
-                button.disabled = true
-                setTimeout(() => {button.innerHTML = "Send"; button.disabled = false}, 6500)
-            }
-        </script>
+        <script src="assets/scripts.js" type="text/javascript"></script>
     </body>
 </html>
