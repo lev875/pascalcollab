@@ -206,7 +206,7 @@ function CreateCode(filename){
 }
 
 function GetCode(filename){
-    $(".leftcol").addClass("disabled");
+    $(".container").addClass("disabled");
     var ref = firebase.database().ref("usercode/");
     var FileHash;
     firebase.database().ref("users/" + uid + "/" + filename).once("value").then(function(snapshot) {
@@ -220,7 +220,7 @@ function GetCode(filename){
                 defaultText: "begin\r\n\ \t writeln(\'hello world\');\r\nend."     
             });
             var f = function(){
-                $(".leftcol").removeClass("disabled");
+                $(".container").removeClass("disabled");
             }
             setTimeout(f, 500);
         }
