@@ -14,7 +14,6 @@ stdin.value = ''
 errors.value = ''
 
 var firepad;
-var firepadRef;
 
 function init() {
     var config = {
@@ -23,44 +22,26 @@ function init() {
         databaseURL: "https://pascalcollab.firebaseio.com"
     };
     firebase.initializeApp(config);
-    firepadRef = getExampleRef();
-    firepad = Firepad.fromACE(firepadRef, editor, {
+}
+
+function CrCode(){
+    var ref = firebase.database().ref('usercode/').push();
+    ref.set({
+        creator: "user1",
+        collaborators: {
+            user2: true
+        },
+        readers: {
+            user3: true
+        },
+        code: ""
+    });
+    ref = ref.child("code/");
+    editor.value = "";
+    editor.dispose;
+    firepad = Firepad.fromACE(ref, editor, {
         defaultText: 'begin\r\n\ \t writeln(\'hello world\');\r\nend.'
     });
-}
-
-function getExampleRef() {
-    var ref = firebase.database().ref();
-    var hash = window.location.hash.replace(/#/g, '');
-    if (hash) {
-        ref = ref.child(hash);
-    } else {
-        ref = ref.push(); // generate unique location.
-        window.location = window.location + '#' + ref.key; // add it as a hash to the URL.
-    }
-    return ref;
-}
-
-function Ex1() {
-    var hash = window.location.hash.replace(/#/g, '');
-    if (hash != '-KbecJaQd_evyTFkLuHV') {
-        window.location = '#' + '-KbecJaQd_evyTFkLuHV';
-        firepadRef = getExampleRef();
-        firepad.dispose()
-        editor.setValue('')
-        firepad = Firepad.fromACE(firepadRef, editor)
-    }
-}
-
-function Ex2() {
-    var hash = window.location.hash.replace(/#/g, '');
-    if (hash != '-KbeeU8CZgax96b9uk-9') {
-        window.location = '#' + '-KbeeU8CZgax96b9uk-9';
-        firepadRef = getExampleRef();
-        firepad.dispose()
-        editor.setValue('')
-        firepad = Firepad.fromACE(firepadRef, editor)
-    }
 }
 
 function changeTab(tabName) {
