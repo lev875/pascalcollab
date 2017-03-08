@@ -72,7 +72,7 @@ function sendCode() {
     setTimeout(() => {
         button.innerHTML = "Send";
         button.disabled = false
-    }, 6500)
+    }, 7500)
 }
 
 function addFile(parent, name) {
@@ -168,7 +168,6 @@ function CrCode(filename){
         }
     });
     var code = "{ \"" + filename + "\" : \"" + ref.key + "\" }";
-    console.log(code);
     code = JSON.parse(code)
                                                     //Заменить на uid
     var usrRef = firebase.database().ref("users/" + "user1").update(code); 
@@ -182,9 +181,8 @@ function CrCode(filename){
 
 function GetCode(filename){
     var ref = firebase.database().ref("usercode/");
-    //var filename = document.getElementById("crC").value;
     var FileHash;
-                                                 //Заменить на uid
+                                        //Заменить на uid
     firebase.database().ref("users/" + "user1/" + filename).once("value").then(function(snapshot) {
         fileHash = snapshot.val();
         ref = ref.child(fileHash);
