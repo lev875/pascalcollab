@@ -97,13 +97,13 @@ function removeFile(parent, id){
     id = id.slice(id.search("/") + 1);
     $(parent).parent().remove();
     var user = "user1"; //заменить на uid
-    var ref = firebase.database().ref("users/" + user +  "/" + id);
+    var userRef = firebase.database().ref("users/" + user +  "/" + id);
     var fileHash;
-    ref.once("value").then(function (snapshot){
+    userRef.once("value").then(function (snapshot){
         fileHash = snapshot.val();
-        var ref1 = firebase.database().ref("usercode/" + fileHash);
-        ref1.remove();
-        ref.remove();
+        var codeRef = firebase.database().ref("usercode/" + fileHash);
+        codeRef.remove();
+        userRef.remove();
     });
 }
 
