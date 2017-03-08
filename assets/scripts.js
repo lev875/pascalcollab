@@ -78,7 +78,7 @@ function sendCode() {
 function addFile(parent, name) {
     var id = $(parent).attr('id') + '/' + name
     if (!document.getElementById(id)) {
-        CrCode(name);
+        CreateCode(name);
         var li = $('<li></li>')
         $(parent).prepend(li)
         li.append(name + '<button class="btn" onClick = "$(this).parent().remove()">-</button>') //Так блять, у нас тут кнопка, которая удаляет ... паддажиии, ебана, а удалять код из базы кто будет?!!
@@ -98,7 +98,7 @@ function addFolder(parent, name) {
         $(parent).append(span)
         span.text(name)
         $(parent).append(ul)
-        span.append('<button class="btn" onClick = "$(this).parent().next().remove(); $(this).parent().remove()">-</button>')
+        span.append('<button class="btn" onClick = "$(this).parent().next().remove(); $(this).parent().remove()">-</button>') //Запилить нормальное удаление
         ul.attr('id', id)
         addBtn(ul, '')
         span.click(function() {
@@ -156,7 +156,7 @@ function getNameF(parent) {
     });
 }
 
-function CrCode(filename){
+function CreateCode(filename){
     var ref = firebase.database().ref('usercode/').push();
     ref.set({
         creator: "user1", //Заменить на uid
@@ -180,17 +180,24 @@ function CrCode(filename){
 }
 
 function GetCode(filename){
+    $(".leftcol").addClass("disabled");
     var ref = firebase.database().ref("usercode/");
     var FileHash;
                                         //Заменить на uid
     firebase.database().ref("users/" + "user1/" + filename).once("value").then(function(snapshot) {
-        fileHash = snapshot.val();
-        ref = ref.child(fileHash);
-        ref = ref.child("code/")
-        if (firepad) firepad.dispose()
-        editor.setValue("")
-        firepad = Firepad.fromACE(ref, editor, {
-        defaultText: "begin\r\n\ \t writeln(\'hello world\');\r\nend."
-    });
+        if (snapshot) {
+            fileHash = snapshot.val();
+            ref = ref.child(fileHash);
+            ref = ref.child("code/")
+            if (firepad) firepad.dispose()
+            editor.setValue("")
+            firepad = Firepad.fromACE(ref, editor, {
+                defaultText: "begin\r\n\ \t writeln(\'hello world\');\r\nend."     
+            });
+            var f = function(){
+                $(".leftcol").removeClass("disabled");
+            }
+            setTimeout(f, 500);
+        }
     });
 }

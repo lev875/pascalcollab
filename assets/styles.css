@@ -138,3 +138,10 @@ nav textarea {
   resize: none;
   border: solid 1px black;
 }
+
+div.disabled
+{
+  pointer-events: none;
+  opacity: 0.5;
+  background: #CCC;
+}
