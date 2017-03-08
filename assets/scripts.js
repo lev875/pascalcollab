@@ -175,8 +175,9 @@ function getNameF(parent) {
 
 function CreateCode(filename){
     var ref = firebase.database().ref('usercode/').push();
+    var user = "user1";//Заменить на uid
     ref.set({
-        creator: "user1", //Заменить на uid
+        creator: user,
         collaborators: {
             user2: true
         },
@@ -186,8 +187,7 @@ function CreateCode(filename){
     });
     var code = "{ \"" + filename + "\" : \"" + ref.key + "\" }";
     code = JSON.parse(code)
-                                                    //Заменить на uid
-    var usrRef = firebase.database().ref("users/" + "user1").update(code); 
+    var usrRef = firebase.database().ref("users/" + user).update(code); 
     ref = ref.child("code/");
     if (firepad) firepad.dispose()
     editor.setValue("")
