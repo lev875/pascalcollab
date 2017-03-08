@@ -15,25 +15,6 @@ output.value = ''
 stdin.value = ''
 errors.value = ''
 
-function init() {
-    var config = {
-        apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
-        authDomain: "pascalcollab.firebaseapp.com",
-        databaseURL: "https://pascalcollab.firebaseio.com"
-    };
-    firebase.initializeApp(config);
-    firebase.auth().signInAnonymously().catch(function(error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        alert(errorCode + ":\n" + errorMessage);
-    });
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            uid = user.uid;
-        } else {}
-    });
-}
-
 function changeTab(tabName) {
     var i
     var x = document.getElementsByClassName("tab")
@@ -98,14 +79,14 @@ function addFile(parent, name) {
         li.append('<button class="btn" onClick = "removeFile(this, \'' + id +'\')">-</button>');
         li.attr('id', id);
         span.click(function(){
-            var txt = li.text().slice(0,-1);
+            var txt = li.text().slice(0,-1); //add folder support!
             GetCode(txt); 
         })
     } else alert('invalid name')
 }
 
 function removeFile(parent, id){
-    id = id.slice(id.search("/") + 1);
+    id = id.slice(id.lastIndexOf("/") + 1);
     $(parent).parent().remove();
     var userRef = firebase.database().ref("users/" + uid +  "/" + id);
     var fileHash;
@@ -133,6 +114,15 @@ function addFolder(parent, name) {
         })
     } else alert('invalid name')
 }
+
+/*
+Запилить нормальное дерево папок!
+function removeFolder(){
+    firebase.database().ref("users/" + uid).once("value").then(function (snapshot){
+
+    });
+}
+*/
 
 function addBtn(parent, name) {
     $(parent).prepend($('<button></button>').text('+' + name).attr({
@@ -195,11 +185,20 @@ function CreateCode(filename){
         }
     });
     var code = "{ \"" + filename + "\" : \"" + ref.key + "\" }";
-    code = JSON.parse(code)
-    var usrRef = firebase.database().ref("users/" + uid).update(code); 
+    code = JSON.parse(code);
+    firebase.database().ref("users/" + uid).update(code); 
     ref = ref.child("code/");
-    if (firepad) firepad.dispose()
-    editor.setValue("")
+    if (firepad) firepad.dispose();
+    var div = $("<div>")
+    $("#editor").before(div);
+    $("#editor").remove();
+    div.attr("id", "editor");
+    editor = ace.edit("editor");
+    session = editor.getSession();
+    session.setUseWrapMode(true);
+    session.setUseWorker(false);
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/pascal");
     firepad = Firepad.fromACE(ref, editor, {
         defaultText: "begin\r\n\ \t writeln(\'hello world\');\r\nend."
     });
@@ -214,15 +213,38 @@ function GetCode(filename){
             fileHash = snapshot.val();
             ref = ref.child(fileHash);
             ref = ref.child("code/")
-            if (firepad) firepad.dispose()
-            editor.setValue("")
-            firepad = Firepad.fromACE(ref, editor, {
-                defaultText: "begin\r\n\ \t writeln(\'hello world\');\r\nend."     
-            });
-            var f = function(){
-                $(".container").removeClass("disabled");
-            }
-            setTimeout(f, 500);
+            if (firepad) firepad.dispose();
+            var div = $("<div>")
+            $("#editor").before(div);
+            $("#editor").remove();
+            div.attr("id", "editor");
+            editor = ace.edit("editor");
+            session = editor.getSession();
+            session.setUseWrapMode(true);
+            session.setUseWorker(false);
+            editor.setTheme("ace/theme/monokai");
+            editor.getSession().setMode("ace/mode/pascal");
+            firepad = Firepad.fromACE(ref, editor);
+            $(".container").removeClass("disabled");
         }
     });
 }
+
+var config = {
+    apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
+    authDomain: "pascalcollab.firebaseapp.com",
+    databaseURL: "https://pascalcollab.firebaseio.com"
+};
+firebase.initializeApp(config);
+firebase.auth().signInAnonymously().catch(function(error) { //Авторизацию запили, сука!
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    console.log(errorCode + ":\n" + errorMessage);
+});
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        uid = user.uid; //Здесь получение списка папок/файлов и построение дерева
+    } else {
+        console.log("Not logged in!");
+    }
+});
