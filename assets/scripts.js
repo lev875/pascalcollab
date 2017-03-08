@@ -5,15 +5,45 @@ var editor = ace.edit("editor");
 var session = editor.getSession();
 var firepad;
 var uid;
+var config = {
+    apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
+    authDomain: "pascalcollab.firebaseapp.com",
+    databaseURL: "https://pascalcollab.firebaseio.com"
+};
+
+firebase.initializeApp(config);
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        //uid = user.uid;
+        //Здесь получение списка папок/файлов и построение дерева
+        uid = "user1";
+        firebase.database().ref("users/" + uid).once("value").then(function (snapshot){
+            $("#root").children().remove();
+            var obj = snapshot.val();
+            for(var key in obj){
+                console.log(key);
+                console.log(obj[key]); //Я заебался
+            }
+            addBtn($('#root'), 'F');
+            addBtn($('#root'), '');
+        })
+    } else {
+        console.log("Not logged in!");
+    }
+});
 
 session.setUseWrapMode(true);
 session.setUseWorker(false);
 editor.setTheme("ace/theme/monokai");
 editor.getSession().setMode("ace/mode/pascal");
+editor.setValue("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
 
 output.value = ''
 stdin.value = ''
 errors.value = ''
+
+addBtn($('#root'), 'F');
+addBtn($('#root'), '');
 
 function changeTab(tabName) {
     var i
@@ -70,7 +100,7 @@ function sendCode() {
 function addFile(parent, name) {
     var id = $(parent).attr('id') + '/' + name
     if (!document.getElementById(id) && name.search("/") === -1) {
-        CreateCode(name);
+        CreateCode(name, id);
         var li = $('<li></li>');
         var span = $("<span>" + name + "</span>");
         span.css("display", "inline-block");
@@ -79,17 +109,16 @@ function addFile(parent, name) {
         li.append('<button class="btn" onClick = "removeFile(this, \'' + id +'\')">-</button>');
         li.attr('id', id);
         span.click(function(){
-            var txt = li.text().slice(0,-1); //add folder support!
-            GetCode(txt); 
+            GetCode(id); 
         })
     } else alert('invalid name')
 }
 
 function removeFile(parent, id){
-    id = id.slice(id.lastIndexOf("/") + 1);
-    $(parent).parent().remove();
-    var userRef = firebase.database().ref("users/" + uid +  "/" + id);
+    var path = id.slice(id.search("/") + 1);
+    var userRef = firebase.database().ref("users/" + uid +  "/" + path);
     var fileHash;
+    $(parent).parent().remove();
     userRef.once("value").then(function (snapshot){
         fileHash = snapshot.val();
         var codeRef = firebase.database().ref("usercode/" + fileHash);
@@ -99,30 +128,37 @@ function removeFile(parent, id){
 }
 
 function addFolder(parent, name) {
-    var id = $(parent).attr('id') + '/' + name
-    if (!document.getElementById(id)) {
+    var id = $(parent).attr('id') + '/' + name;
+    if (!document.getElementById(id) && name.search("/") === -1) {
+        firebase.database().ref("users/" + uid + "/" + name).set("");
         var ul = $('<ul></ul>')
         var span = $('<span></span>')
         $(parent).append(span)
         span.text(name)
         $(parent).append(ul)
-        span.append('<button class="btn" onClick = "$(this).parent().next().remove(); $(this).parent().remove()">-</button>') //Запилить нормальное удаление
+        span.append('<button class="btn" onClick = "removeFolder(this, \'' + id +'\')">-</button>') //Запилить нормальное удаление
         ul.attr('id', id)
         addBtn(ul, '')
         span.click(function() {
             $(this).next().children().fadeToggle('fast')
-        })
+        });
     } else alert('invalid name')
 }
 
-/*
-Запилить нормальное дерево папок!
-function removeFolder(){
-    firebase.database().ref("users/" + uid).once("value").then(function (snapshot){
-
+function removeFolder(parent, id){
+    var path = id.slice(id.search("/") + 1); 
+    var ref = firebase.database().ref("users/" + uid +  "/" + path);
+    $(parent).parent().next().remove();
+    $(parent).parent().remove();
+    ref.once("value").then(function (snapshot){
+        var obj = snapshot.val();
+        var codeRef = firebase.database().ref("usercode/");
+        for(var key in obj){
+            codeRef.child(obj[key]).remove();
+        }
+        ref.remove();
     });
 }
-*/
 
 function addBtn(parent, name) {
     $(parent).prepend($('<button></button>').text('+' + name).attr({
@@ -130,11 +166,6 @@ function addBtn(parent, name) {
         "class": "btn"
     }))
 }
-
-addBtn($('#root'), 'F')
-addBtn($('#root'), '')
-
-//Escape sequences и проверка имен на совпадение!!!
 
 function getName(parent) {
     $('.btn').css('visibility', 'hidden')
@@ -161,7 +192,8 @@ function getNameF(parent) {
     $(parent).before(tarea)
     tarea.keyup(function(e) {
         if (e.keyCode == 13) {
-            var txt = tarea.val()
+            var txt = tarea.val();
+            txt = txt.slice(0,-1);
             $('.btn').css('visibility', 'visible')
             addFolder($(parent).parent(), txt)
             tarea.remove()
@@ -173,10 +205,10 @@ function getNameF(parent) {
     });
 }
 
-function CreateCode(filename){
-    var ref = firebase.database().ref('usercode/').push();
+function CreateCode(filename, id){
+    var ref = firebase.database().ref("usercode/").push();
     ref.set({
-        creator: uid,
+        creator: uid, //For testing only
         collaborators: {
             user2: true
         },
@@ -184,9 +216,8 @@ function CreateCode(filename){
             user3: true
         }
     });
-    var code = "{ \"" + filename + "\" : \"" + ref.key + "\" }";
-    code = JSON.parse(code);
-    firebase.database().ref("users/" + uid).update(code); 
+    var path = id.slice(id.search("/") + 1);
+    firebase.database().ref("users/" + uid + "/" + path).set(ref.key); 
     ref = ref.child("code/");
     if (firepad) firepad.dispose();
     var div = $("<div>")
@@ -204,11 +235,12 @@ function CreateCode(filename){
     });
 }
 
-function GetCode(filename){
+function GetCode(id){
     $(".container").addClass("disabled");
     var ref = firebase.database().ref("usercode/");
+    var path = id.slice(id.search("/") + 1); 
     var FileHash;
-    firebase.database().ref("users/" + uid + "/" + filename).once("value").then(function(snapshot) {
+    firebase.database().ref("users/" + uid + "/" + path).once("value").then(function(snapshot) {
         if (snapshot) {
             fileHash = snapshot.val();
             ref = ref.child(fileHash);
@@ -229,22 +261,3 @@ function GetCode(filename){
         }
     });
 }
-
-var config = {
-    apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
-    authDomain: "pascalcollab.firebaseapp.com",
-    databaseURL: "https://pascalcollab.firebaseio.com"
-};
-firebase.initializeApp(config);
-firebase.auth().signInAnonymously().catch(function(error) { //Авторизацию запили, сука!
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    console.log(errorCode + ":\n" + errorMessage);
-});
-firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-        uid = user.uid; //Здесь получение списка папок/файлов и построение дерева
-    } else {
-        console.log("Not logged in!");
-    }
-});
