@@ -77,17 +77,34 @@ function sendCode() {
 
 function addFile(parent, name) {
     var id = $(parent).attr('id') + '/' + name
-    if (!document.getElementById(id)) {
+    if (!document.getElementById(id) && name.search("/") === -1) {
         CreateCode(name);
-        var li = $('<li></li>')
-        $(parent).prepend(li)
-        li.append(name + '<button class="btn" onClick = "$(this).parent().remove()">-</button>') //Так блять, у нас тут кнопка, которая удаляет ... паддажиии, ебана, а удалять код из базы кто будет?!!
-        li.attr('id', id)
-        li.click(function(){
+        var li = $('<li></li>');
+        var span = $("<span>" + name + "</span>");
+        span.css("display", "inline-block");
+        $(parent).prepend(li);
+        li.append(span);
+        li.append('<button class="btn" onClick = "removeFile(this, \'' + id +'\')">-</button>');
+        li.attr('id', id);
+        span.click(function(){
             var txt = li.text().slice(0,-1);
             GetCode(txt); 
         })
     } else alert('invalid name')
+}
+
+function removeFile(parent, id){
+    id = id.slice(id.search("/") + 1);
+    $(parent).parent().remove();
+    var user = "user1"; //заменить на uid
+    var ref = firebase.database().ref("users/" + user +  "/" + id);
+    var fileHash;
+    ref.once("value").then(function (snapshot){
+        fileHash = snapshot.val();
+        var ref1 = firebase.database().ref("usercode/" + fileHash);
+        ref1.remove();
+        ref.remove();
+    });
 }
 
 function addFolder(parent, name) {
