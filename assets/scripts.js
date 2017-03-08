@@ -3,65 +3,47 @@ var stdin = document.getElementById("stdin");
 var errors = document.getElementById("errors");
 var editor = ace.edit("editor");
 var session = editor.getSession();
+var firepad;
+var uid;
+var config = {
+    apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
+    authDomain: "pascalcollab.firebaseapp.com",
+    databaseURL: "https://pascalcollab.firebaseio.com"
+};
+
+firebase.initializeApp(config);
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        //uid = user.uid;
+        //Здесь получение списка папок/файлов и построение дерева
+        uid = "user1";
+        firebase.database().ref("users/" + uid).once("value").then(function (snapshot){
+            $("#root").children().remove();
+            var obj = snapshot.val();
+            for(var key in obj){
+                console.log(key);
+                console.log(obj[key]); //Я заебался
+            }
+            addBtn($('#root'), 'F');
+            addBtn($('#root'), '');
+        })
+    } else {
+        console.log("Not logged in!");
+    }
+});
 
 session.setUseWrapMode(true);
 session.setUseWorker(false);
 editor.setTheme("ace/theme/monokai");
 editor.getSession().setMode("ace/mode/pascal");
+editor.setValue("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
 
 output.value = ''
 stdin.value = ''
 errors.value = ''
 
-var firepad;
-var firepadRef;
-
-function init() {
-    var config = {
-        apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
-        authDomain: "pascalcollab.firebaseapp.com",
-        databaseURL: "https://pascalcollab.firebaseio.com"
-    };
-    firebase.initializeApp(config);
-    firepadRef = getExampleRef();
-    firepad = Firepad.fromACE(firepadRef, editor, {
-        defaultText: 'begin\r\n\ \t writeln(\'hello world\');\r\nend.'
-    });
-}
-
-function getExampleRef() {
-    var ref = firebase.database().ref();
-    var hash = window.location.hash.replace(/#/g, '');
-    if (hash) {
-        ref = ref.child(hash);
-    } else {
-        ref = ref.push(); // generate unique location.
-        window.location = window.location + '#' + ref.key; // add it as a hash to the URL.
-    }
-    return ref;
-}
-
-function Ex1() {
-    var hash = window.location.hash.replace(/#/g, '');
-    if (hash != '-KbecJaQd_evyTFkLuHV') {
-        window.location = '#' + '-KbecJaQd_evyTFkLuHV';
-        firepadRef = getExampleRef();
-        firepad.dispose()
-        editor.setValue('')
-        firepad = Firepad.fromACE(firepadRef, editor)
-    }
-}
-
-function Ex2() {
-    var hash = window.location.hash.replace(/#/g, '');
-    if (hash != '-KbeeU8CZgax96b9uk-9') {
-        window.location = '#' + '-KbeeU8CZgax96b9uk-9';
-        firepadRef = getExampleRef();
-        firepad.dispose()
-        editor.setValue('')
-        firepad = Firepad.fromACE(firepadRef, editor)
-    }
-}
+addBtn($('#root'), 'F');
+addBtn($('#root'), '');
 
 function changeTab(tabName) {
     var i
@@ -112,34 +94,70 @@ function sendCode() {
     setTimeout(() => {
         button.innerHTML = "Send";
         button.disabled = false
-    }, 6500)
+    }, 7500)
 }
 
 function addFile(parent, name) {
     var id = $(parent).attr('id') + '/' + name
-    if (!document.getElementById(id)) {
-        var li = $('<li></li>')
-        $(parent).prepend(li)
-        li.append(name + '<button class="btn" onClick = "$(this).parent().remove()">-</button>')
-        li.attr('id', id)
+    if (!document.getElementById(id) && name.search("/") === -1) {
+        CreateCode(name, id);
+        var li = $('<li></li>');
+        var span = $("<span>" + name + "</span>");
+        span.css("display", "inline-block");
+        $(parent).prepend(li);
+        li.append(span);
+        li.append('<button class="btn" onClick = "removeFile(this, \'' + id +'\')">-</button>');
+        li.attr('id', id);
+        span.click(function(){
+            GetCode(id); 
+        })
     } else alert('invalid name')
 }
 
+function removeFile(parent, id){
+    var path = id.slice(id.search("/") + 1);
+    var userRef = firebase.database().ref("users/" + uid +  "/" + path);
+    var fileHash;
+    $(parent).parent().remove();
+    userRef.once("value").then(function (snapshot){
+        fileHash = snapshot.val();
+        var codeRef = firebase.database().ref("usercode/" + fileHash);
+        codeRef.remove();
+        userRef.remove();
+    });
+}
+
 function addFolder(parent, name) {
-    var id = $(parent).attr('id') + '/' + name
-    if (!document.getElementById(id)) {
+    var id = $(parent).attr('id') + '/' + name;
+    if (!document.getElementById(id) && name.search("/") === -1) {
+        firebase.database().ref("users/" + uid + "/" + name).set("");
         var ul = $('<ul></ul>')
         var span = $('<span></span>')
         $(parent).append(span)
         span.text(name)
         $(parent).append(ul)
-        span.append('<button class="btn" onClick = "$(this).parent().next().remove(); $(this).parent().remove()">-</button>')
+        span.append('<button class="btn" onClick = "removeFolder(this, \'' + id +'\')">-</button>') //Запилить нормальное удаление
         ul.attr('id', id)
         addBtn(ul, '')
         span.click(function() {
             $(this).next().children().fadeToggle('fast')
-        })
+        });
     } else alert('invalid name')
+}
+
+function removeFolder(parent, id){
+    var path = id.slice(id.search("/") + 1); 
+    var ref = firebase.database().ref("users/" + uid +  "/" + path);
+    $(parent).parent().next().remove();
+    $(parent).parent().remove();
+    ref.once("value").then(function (snapshot){
+        var obj = snapshot.val();
+        var codeRef = firebase.database().ref("usercode/");
+        for(var key in obj){
+            codeRef.child(obj[key]).remove();
+        }
+        ref.remove();
+    });
 }
 
 function addBtn(parent, name) {
@@ -149,9 +167,6 @@ function addBtn(parent, name) {
     }))
 }
 
-addBtn($('#root'), 'F')
-addBtn($('#root'), '')
-
 function getName(parent) {
     $('.btn').css('visibility', 'hidden')
     var tarea = $('<textarea></textarea>')
@@ -159,6 +174,7 @@ function getName(parent) {
     tarea.keyup(function(e) {
         if (e.keyCode == 13) {
             var txt = tarea.val()
+            txt = txt.slice(0,-1);
             tarea.remove()
             addFile($(parent).parent(), txt)
             $('.btn').css('visibility', 'visible')
@@ -176,7 +192,8 @@ function getNameF(parent) {
     $(parent).before(tarea)
     tarea.keyup(function(e) {
         if (e.keyCode == 13) {
-            var txt = tarea.val()
+            var txt = tarea.val();
+            txt = txt.slice(0,-1);
             $('.btn').css('visibility', 'visible')
             addFolder($(parent).parent(), txt)
             tarea.remove()
@@ -184,6 +201,63 @@ function getNameF(parent) {
         if (e.keyCode == 27) {
             $('.btn').css('visibility', 'visible')
             tarea.remove()
+        }
+    });
+}
+
+function CreateCode(filename, id){
+    var ref = firebase.database().ref("usercode/").push();
+    ref.set({
+        creator: uid, //For testing only
+        collaborators: {
+            user2: true
+        },
+        readers: {
+            user3: true
+        }
+    });
+    var path = id.slice(id.search("/") + 1);
+    firebase.database().ref("users/" + uid + "/" + path).set(ref.key); 
+    ref = ref.child("code/");
+    if (firepad) firepad.dispose();
+    var div = $("<div>")
+    $("#editor").before(div);
+    $("#editor").remove();
+    div.attr("id", "editor");
+    editor = ace.edit("editor");
+    session = editor.getSession();
+    session.setUseWrapMode(true);
+    session.setUseWorker(false);
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/pascal");
+    firepad = Firepad.fromACE(ref, editor, {
+        defaultText: "begin\r\n\ \t writeln(\'hello world\');\r\nend."
+    });
+}
+
+function GetCode(id){
+    $(".container").addClass("disabled");
+    var ref = firebase.database().ref("usercode/");
+    var path = id.slice(id.search("/") + 1); 
+    var FileHash;
+    firebase.database().ref("users/" + uid + "/" + path).once("value").then(function(snapshot) {
+        if (snapshot) {
+            fileHash = snapshot.val();
+            ref = ref.child(fileHash);
+            ref = ref.child("code/")
+            if (firepad) firepad.dispose();
+            var div = $("<div>")
+            $("#editor").before(div);
+            $("#editor").remove();
+            div.attr("id", "editor");
+            editor = ace.edit("editor");
+            session = editor.getSession();
+            session.setUseWrapMode(true);
+            session.setUseWorker(false);
+            editor.setTheme("ace/theme/monokai");
+            editor.getSession().setMode("ace/mode/pascal");
+            firepad = Firepad.fromACE(ref, editor);
+            $(".container").removeClass("disabled");
         }
     });
 }

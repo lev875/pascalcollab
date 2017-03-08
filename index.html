@@ -21,7 +21,7 @@
         <link rel="stylesheet" type="text/css" href="assets/styles.css">
 
     </head>
-    <body onLoad="init()">
+    <body>
         <div class="header">Pascal collab например</div>
         <div class="container">
             <div class="leftcol">
@@ -30,15 +30,14 @@
                     <ul id="root">
                     </ul>
                 </nav>
-               
             </div>
             <div class="content">
                 <div id="editor"></div>
  
                 <ul class="tabs">
-                    <li id="selected" class="stdinL"><a href="javascript:void(0)" onclick="changeTab('stdin')">Input</a></li>
-                    <li class="outputL"><a href="javascript:void(0)" onclick="changeTab('output')">Output</a></li>
-                    <li class="errorsL"><a href="javascript:void(0)" onclick="changeTab('errors')">Errors</a></li>
+                    <li id="selected" class="stdinL"><a href="javascript:void(0)" onclick="changeTab("stdin")">Input</a></li>
+                    <li class="outputL"><a href="javascript:void(0)" onclick="changeTab("output")">Output</a></li>
+                    <li class="errorsL"><a href="javascript:void(0)" onclick="changeTab("errors")">Errors</a></li>
                 </ul>
                 <div> <!--Тут контейнер!!!-->
                     <textarea id="stdin" class="tab"></textarea>
