@@ -83,6 +83,10 @@ function addFile(parent, name) {
         $(parent).prepend(li)
         li.append(name + '<button class="btn" onClick = "$(this).parent().remove()">-</button>') //Так блять, у нас тут кнопка, которая удаляет ... паддажиии, ебана, а удалять код из базы кто будет?!!
         li.attr('id', id)
+        li.click(function(){
+            var txt = li.text().slice(0,-1);
+            GetCode(txt); 
+        })
     } else alert('invalid name')
 }
 
@@ -176,7 +180,7 @@ function CrCode(filename){
     });
 }
 
-function GetCode(fileName){
+function GetCode(filename){
     var ref = firebase.database().ref("usercode/");
     //var filename = document.getElementById("crC").value;
     var FileHash;
