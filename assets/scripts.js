@@ -3,6 +3,7 @@ var stdin = document.getElementById("stdin");
 var errors = document.getElementById("errors");
 var editor = ace.edit("editor");
 var session = editor.getSession();
+var firepad;
 
 session.setUseWrapMode(true);
 session.setUseWorker(false);
@@ -13,8 +14,6 @@ output.value = ''
 stdin.value = ''
 errors.value = ''
 
-var firepad;
-
 function init() {
     var config = {
         apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
@@ -22,26 +21,6 @@ function init() {
         databaseURL: "https://pascalcollab.firebaseio.com"
     };
     firebase.initializeApp(config);
-}
-
-function CrCode(){
-    var ref = firebase.database().ref('usercode/').push();
-    ref.set({
-        creator: "user1",
-        collaborators: {
-            user2: true
-        },
-        readers: {
-            user3: true
-        },
-        code: ""
-    });
-    ref = ref.child("code/");
-    editor.value = "";
-    editor.dispose;
-    firepad = Firepad.fromACE(ref, editor, {
-        defaultText: 'begin\r\n\ \t writeln(\'hello world\');\r\nend.'
-    });
 }
 
 function changeTab(tabName) {
@@ -99,9 +78,10 @@ function sendCode() {
 function addFile(parent, name) {
     var id = $(parent).attr('id') + '/' + name
     if (!document.getElementById(id)) {
+        CrCode(name);
         var li = $('<li></li>')
         $(parent).prepend(li)
-        li.append(name + '<button class="btn" onClick = "$(this).parent().remove()">-</button>')
+        li.append(name + '<button class="btn" onClick = "$(this).parent().remove()">-</button>') //Так блять, у нас тут кнопка, которая удаляет ... паддажиии, ебана, а удалять код из базы кто будет?!!
         li.attr('id', id)
     } else alert('invalid name')
 }
@@ -133,6 +113,8 @@ function addBtn(parent, name) {
 addBtn($('#root'), 'F')
 addBtn($('#root'), '')
 
+//Escape sequences и проверка имен на совпадение!!!
+
 function getName(parent) {
     $('.btn').css('visibility', 'hidden')
     var tarea = $('<textarea></textarea>')
@@ -140,6 +122,7 @@ function getName(parent) {
     tarea.keyup(function(e) {
         if (e.keyCode == 13) {
             var txt = tarea.val()
+            txt = txt.slice(0,-1);
             tarea.remove()
             addFile($(parent).parent(), txt)
             $('.btn').css('visibility', 'visible')
@@ -166,5 +149,46 @@ function getNameF(parent) {
             $('.btn').css('visibility', 'visible')
             tarea.remove()
         }
+    });
+}
+
+function CrCode(filename){
+    var ref = firebase.database().ref('usercode/').push();
+    ref.set({
+        creator: "user1", //Заменить на uid
+        collaborators: {
+            user2: true
+        },
+        readers: {
+            user3: true
+        }
+    });
+    var code = "{ \"" + filename + "\" : \"" + ref.key + "\" }";
+    console.log(code);
+    code = JSON.parse(code)
+                                                    //Заменить на uid
+    var usrRef = firebase.database().ref("users/" + "user1").update(code); 
+    ref = ref.child("code/");
+    if (firepad) firepad.dispose()
+    editor.setValue("")
+    firepad = Firepad.fromACE(ref, editor, {
+        defaultText: "begin\r\n\ \t writeln(\'hello world\');\r\nend."
+    });
+}
+
+function GetCode(fileName){
+    var ref = firebase.database().ref("usercode/");
+    //var filename = document.getElementById("crC").value;
+    var FileHash;
+                                                 //Заменить на uid
+    firebase.database().ref("users/" + "user1/" + filename).once("value").then(function(snapshot) {
+        fileHash = snapshot.val();
+        ref = ref.child(fileHash);
+        ref = ref.child("code/")
+        if (firepad) firepad.dispose()
+        editor.setValue("")
+        firepad = Firepad.fromACE(ref, editor, {
+        defaultText: "begin\r\n\ \t writeln(\'hello world\');\r\nend."
+    });
     });
 }
