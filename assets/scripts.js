@@ -4,6 +4,7 @@ var errors = document.getElementById("errors");
 var editor = ace.edit("editor");
 var session = editor.getSession();
 var firepad;
+var uid;
 
 session.setUseWrapMode(true);
 session.setUseWorker(false);
@@ -21,6 +22,16 @@ function init() {
         databaseURL: "https://pascalcollab.firebaseio.com"
     };
     firebase.initializeApp(config);
+    firebase.auth().signInAnonymously().catch(function(error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        alert(errorCode + ":\n" + errorMessage);
+    });
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            uid = user.uid;
+        } else {}
+    });
 }
 
 function changeTab(tabName) {
@@ -96,8 +107,7 @@ function addFile(parent, name) {
 function removeFile(parent, id){
     id = id.slice(id.search("/") + 1);
     $(parent).parent().remove();
-    var user = "user1"; //заменить на uid
-    var userRef = firebase.database().ref("users/" + user +  "/" + id);
+    var userRef = firebase.database().ref("users/" + uid +  "/" + id);
     var fileHash;
     userRef.once("value").then(function (snapshot){
         fileHash = snapshot.val();
@@ -175,9 +185,8 @@ function getNameF(parent) {
 
 function CreateCode(filename){
     var ref = firebase.database().ref('usercode/').push();
-    var user = "user1";//Заменить на uid
     ref.set({
-        creator: user,
+        creator: uid,
         collaborators: {
             user2: true
         },
@@ -187,7 +196,7 @@ function CreateCode(filename){
     });
     var code = "{ \"" + filename + "\" : \"" + ref.key + "\" }";
     code = JSON.parse(code)
-    var usrRef = firebase.database().ref("users/" + user).update(code); 
+    var usrRef = firebase.database().ref("users/" + uid).update(code); 
     ref = ref.child("code/");
     if (firepad) firepad.dispose()
     editor.setValue("")
@@ -200,8 +209,7 @@ function GetCode(filename){
     $(".leftcol").addClass("disabled");
     var ref = firebase.database().ref("usercode/");
     var FileHash;
-                                        //Заменить на uid
-    firebase.database().ref("users/" + "user1/" + filename).once("value").then(function(snapshot) {
+    firebase.database().ref("users/" + uid + "/" + filename).once("value").then(function(snapshot) {
         if (snapshot) {
             fileHash = snapshot.val();
             ref = ref.child(fileHash);
