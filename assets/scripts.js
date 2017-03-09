@@ -5,6 +5,7 @@ var editor = ace.edit("editor");
 var session = editor.getSession();
 var firepad;
 var uid;
+var userEmail;
 var email;
 var config = {
     apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
@@ -17,8 +18,9 @@ firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         //uid = user.uid;
         uid = "user1"; //For testing only
-        email = "user1@firebase.com";
         firebase.database().ref("users/" + email).once("value").then(update);
+        userEmail = "user1@firebase.com";
+        email = userEmail.replace(/\./g, ',');
     } else {
         console.log("Not logged in!");
         $("#root").children().remove();
@@ -237,7 +239,7 @@ function getNameF(parent) {
 function CreateCode(filename, id){
     var ref = firebase.database().ref("usercode/").push();
     ref.set({
-        creator: uid, //For testing only
+        creator: email, //For testing only
         collaborators: {
             user2: true
         },
