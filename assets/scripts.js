@@ -107,7 +107,7 @@ function sendCode() {
 
 function addFile(parent, name, f) {
     var id = $(parent).attr('id') + '/' + name
-    if (!document.getElementById(id) && name.search("/") === -1) {
+    if (!document.getElementById(id) && checkName(name)) {
         if(f) CreateCode(name, id);
         var li = $('<li></li>');
         var span = $("<span>" + name + "</span>");
@@ -137,19 +137,23 @@ function removeFile(parent, id){
 
 function addFolder(parent, name, f) {
     var id = $(parent).attr('id') + '/' + name;
-    if (!document.getElementById(id) && name.search("/") === -1) {
+    if (!document.getElementById(id) && checkName(name)) {
         if(f) firebase.database().ref("users/" + uid + "/" + name).set("");
         var ul = $('<ul></ul>')
         var span = $('<span></span>')
-        $(parent).append(span)
+        var btn = $('<button class="btn" onClick = "removeFolder(this, \'' + id +'\')">-</button>');
+        var div = $('<div display="inline-block">');
+        $(parent).append(div);
+        div.append(span)
         span.text(name)
-        $(parent).append(ul)
-        span.append('<button class="btn" onClick = "removeFolder(this, \'' + id +'\')">-</button>') //Запилить нормальное удаление
+        div.append(ul)
+        span.after(btn);
         ul.attr('id', id)
         addBtn(ul, '')
         span.click(function() {
-            $(this).next().children().fadeToggle('fast')
+            ul.children().fadeToggle('fast')
         });
+        btn.off("click");
         return ul;
     } else alert('invalid name')
 }
@@ -157,7 +161,6 @@ function addFolder(parent, name, f) {
 function removeFolder(parent, id){
     var path = id.slice(id.search("/") + 1); 
     var ref = firebase.database().ref("users/" + uid +  "/" + path);
-    $(parent).parent().next().remove();
     $(parent).parent().remove();
     ref.once("value").then(function (snapshot){
         var obj = snapshot.val();
@@ -170,10 +173,12 @@ function removeFolder(parent, id){
 }
 
 function addBtn(parent, name) {
-    $(parent).prepend($('<button></button>').text('+' + name).attr({
+    var btn = $('<button></button>').text('+' + name).attr({
         "onClick": "getName" + name + "(this)",
-        "class": "btn"
-    }))
+        "class": "btn",
+        "id": "rootBtn" + name
+    });
+    $(parent).prepend(btn);
 }
 
 function getName(parent) {
@@ -269,4 +274,11 @@ function GetCode(id){
             $(".container").removeClass("disabled");
         }
     });
+}
+
+function checkName(name) {
+    var arr = name;
+    arr = arr.split(/[\\\/\.\#\$\[\]]/);
+    if(arr.length === 1) return true; 
+    return false;
 }

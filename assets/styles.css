@@ -110,8 +110,8 @@ nav li {
   color: black;
 }
 
-nav span {
-  display: block;
+nav  span{
+  display: inline-block;
 }
 
 nav ul {
@@ -129,6 +129,10 @@ nav ul ul {
 
 span {
   cursor: pointer
+}
+
+nav button {
+  display: inline-block;
 }
 
 nav textarea {
