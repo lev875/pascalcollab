@@ -15,18 +15,8 @@ firebase.initializeApp(config);
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         //uid = user.uid;
-        //Здесь получение списка папок/файлов и построение дерева
-        uid = "user1";
-        firebase.database().ref("users/" + uid).once("value").then(function (snapshot){
-            $("#root").children().remove();
-            var obj = snapshot.val();
-            for(var key in obj){
-                console.log(key);
-                console.log(obj[key]); //Я заебался
-            }
-            addBtn($('#root'), 'F');
-            addBtn($('#root'), '');
-        })
+        uid = "user1"; //For testing only
+        firebase.database().ref("users/" + uid).once("value").then(update);
     } else {
         console.log("Not logged in!");
     }
@@ -44,6 +34,24 @@ errors.value = ''
 
 addBtn($('#root'), 'F');
 addBtn($('#root'), '');
+
+function update(snapshot){
+    $("#root").children().remove();
+    addBtn($('#root'), 'F');
+    addBtn($('#root'), '');
+    var obj = snapshot.val();
+    for(var key in obj){
+        if(typeof obj[key] != "object" && obj[key] != ""){
+            addFile($("#root"), key, false)
+        } else {
+            var folder = addFolder($("#root"), key, false);
+            for(var k in obj[key]){
+                addFile(folder, k, false);
+            }
+        }
+    }
+    $(".container").removeClass("disabled");
+}
 
 function changeTab(tabName) {
     var i
@@ -97,10 +105,10 @@ function sendCode() {
     }, 7500)
 }
 
-function addFile(parent, name) {
+function addFile(parent, name, f) {
     var id = $(parent).attr('id') + '/' + name
     if (!document.getElementById(id) && name.search("/") === -1) {
-        CreateCode(name, id);
+        if(f) CreateCode(name, id);
         var li = $('<li></li>');
         var span = $("<span>" + name + "</span>");
         span.css("display", "inline-block");
@@ -127,10 +135,10 @@ function removeFile(parent, id){
     });
 }
 
-function addFolder(parent, name) {
+function addFolder(parent, name, f) {
     var id = $(parent).attr('id') + '/' + name;
     if (!document.getElementById(id) && name.search("/") === -1) {
-        firebase.database().ref("users/" + uid + "/" + name).set("");
+        if(f) firebase.database().ref("users/" + uid + "/" + name).set("");
         var ul = $('<ul></ul>')
         var span = $('<span></span>')
         $(parent).append(span)
@@ -142,6 +150,7 @@ function addFolder(parent, name) {
         span.click(function() {
             $(this).next().children().fadeToggle('fast')
         });
+        return ul;
     } else alert('invalid name')
 }
 
@@ -176,7 +185,7 @@ function getName(parent) {
             var txt = tarea.val()
             txt = txt.slice(0,-1);
             tarea.remove()
-            addFile($(parent).parent(), txt)
+            addFile($(parent).parent(), txt, true)
             $('.btn').css('visibility', 'visible')
         }
         if (e.keyCode == 27) {
@@ -195,7 +204,7 @@ function getNameF(parent) {
             var txt = tarea.val();
             txt = txt.slice(0,-1);
             $('.btn').css('visibility', 'visible')
-            addFolder($(parent).parent(), txt)
+            addFolder($(parent).parent(), txt, true)
             tarea.remove()
         }
         if (e.keyCode == 27) {
