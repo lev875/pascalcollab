@@ -128,7 +128,7 @@ function addFile(parent, name, f) {
         if(f) CreateCode(name, id);
         var li = $('<li></li>');
         var span = $("<span>" + name + "</span>");
-        span.css("display", "inline-block");
+        span.css("display", "inline-block"); //Перекинуть в css
         $(parent).prepend(li);
         li.append(span);
         li.append('<button class="btn" onClick = "removeFile(this, \'' + id +'\')">-</button>');
@@ -187,6 +187,20 @@ function removeFolder(parent, id){
         }
         ref.remove();
     });
+}
+
+function addCollaborator(parent){
+    var li = $("<li>");
+    var btn = $('<button class="btn" onClick = "remove(this)">-</button>');
+    var span = $('<span></span>');
+    $(parent).css('visibility', 'hidden');
+    $("#collaborators").append(li);
+    li.append(span);
+    li.append(btn);
+}
+
+function remove(parent){
+    $(parent).parent().remove();
 }
 
 function addBtn(parent, name) {
