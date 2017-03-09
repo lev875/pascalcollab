@@ -5,6 +5,7 @@ var editor = ace.edit("editor");
 var session = editor.getSession();
 var firepad;
 var uid;
+var email;
 var config = {
     apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
     authDomain: "pascalcollab.firebaseapp.com",
@@ -16,7 +17,8 @@ firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         //uid = user.uid;
         uid = "user1"; //For testing only
-        firebase.database().ref("users/" + uid).once("value").then(update);
+        email = "user1@firebase.com";
+        firebase.database().ref("users/" + email).once("value").then(update);
     } else {
         console.log("Not logged in!");
         $("#root").children().remove();
@@ -137,7 +139,7 @@ function addFile(parent, name, f) {
 
 function removeFile(parent, id){
     var path = id.slice(id.search("/") + 1);
-    var userRef = firebase.database().ref("users/" + uid +  "/" + path);
+    var userRef = firebase.database().ref("users/" + email +  "/" + path);
     var fileHash;
     $(parent).parent().remove();
     userRef.once("value").then(function (snapshot){
@@ -151,7 +153,7 @@ function removeFile(parent, id){
 function addFolder(parent, name, f) {
     var id = $(parent).attr('id') + '/' + name;
     if (!document.getElementById(id) && checkName(name)) {
-        if(f) firebase.database().ref("users/" + uid + "/" + name).set("");
+        if(f) firebase.database().ref("users/" + email + "/" + name).set("");
         var ul = $('<ul></ul>')
         var span = $('<span></span>')
         var btn = $('<button class="btn" onClick = "removeFolder(this, \'' + id +'\')">-</button>');
@@ -173,7 +175,7 @@ function addFolder(parent, name, f) {
 
 function removeFolder(parent, id){
     var path = id.slice(id.search("/") + 1); 
-    var ref = firebase.database().ref("users/" + uid +  "/" + path);
+    var ref = firebase.database().ref("users/" + email +  "/" + path);
     $(parent).parent().remove();
     ref.once("value").then(function (snapshot){
         var obj = snapshot.val();
@@ -244,7 +246,7 @@ function CreateCode(filename, id){
         }
     });
     var path = id.slice(id.search("/") + 1);
-    firebase.database().ref("users/" + uid + "/" + path).set(ref.key); 
+    firebase.database().ref("users/" + email + "/" + path).set(ref.key); 
     ref = ref.child("code/");
     if (firepad) firepad.dispose();
     var div = $("<div>")
@@ -267,7 +269,7 @@ function GetCode(id){
     var ref = firebase.database().ref("usercode/");
     var path = id.slice(id.search("/") + 1); 
     var FileHash;
-    firebase.database().ref("users/" + uid + "/" + path).once("value").then(function(snapshot) {
+    firebase.database().ref("users/" + email + "/" + path).once("value").then(function(snapshot) {
         if (snapshot) {
             fileHash = snapshot.val();
             ref = ref.child(fileHash);
