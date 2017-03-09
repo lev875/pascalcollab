@@ -1,6 +1,11 @@
+html {
+  height: 100%;
+}
+
 body {
-    font: 10pt Arial, Helvetica, sans-serif;
-    background: white;
+  font: 10pt Arial, Helvetica, sans-serif;
+  background: white;
+  height: 98.5%;
 }
 h2 {
     margin-top: 0;
@@ -15,6 +20,7 @@ a {
 }
 .container { 
     position: relative;
+    height: 94.7%;
 }
 .container > div { 
     position: absolute;
@@ -30,19 +36,21 @@ a {
     height: 5vh;
 }
 .leftcol {
-    background: #C7E3E4;
-    width: 20%;
-    height: 500px;
+  background: #272822;
+  width: 20%;
+  height: 69.5vh;
 }
 
 .rightcol {
-     background: #ECD5DE;
+     background: #272822;
      right: 0;
      width: 20%; 
+     height: 69.5vh;
 }
 .content {
     left: 20%;
     width: 60%; 
+    height: 100%;
 }
 .tabs {
     margin: 0;
@@ -91,14 +99,13 @@ a {
     border-left: 5px solid white;
 }
 #editor {
-    height: 60vh;
     width: auto;
+    height: 69.5vh;
 }
 
 /* cтили зайчатков файломенеджера */
 nav {
-  width: 200px;
-  margin: 10px;
+  width: 100%;
 }
 nav li {
   display: block;
@@ -133,6 +140,7 @@ span {
 
 nav button {
   display: inline-block;
+  margin: 2.5px;
 }
 
 nav textarea {

@@ -26,25 +26,25 @@
         <div class="container disabled" class="disabled">
             <div class="leftcol">
                 <nav>
-                    <span></span>
                     <ul id="root">
                     </ul>
                 </nav>
             </div>
             <div class="content">
                 <div id="editor"></div>
- 
-                <ul class="tabs">
-                    <li id="selected" class="stdinL"><a href="javascript:void(0)" onclick="changeTab("stdin")">Input</a></li>
-                    <li class="outputL"><a href="javascript:void(0)" onclick="changeTab("output")">Output</a></li>
-                    <li class="errorsL"><a href="javascript:void(0)" onclick="changeTab("errors")">Errors</a></li>
-                </ul>
-                <div> <!--Тут контейнер!!!-->
-                    <textarea id="stdin" class="tab"></textarea>
-                    <textarea id="output" class="tab" readonly="readonly"></textarea>
-                    <textarea id="errors" class="tab" readonly="readonly"></textarea>
+                <div class="tabs-container"> 
+                    <ul class="tabs">
+                        <li id="selected" class="stdinL"><a href="javascript:void(0)" onclick="changeTab("stdin")">Input</a></li>
+                        <li class="outputL"><a href="javascript:void(0)" onclick="changeTab("output")">Output</a></li>
+                        <li class="errorsL"><a href="javascript:void(0)" onclick="changeTab("errors")">Errors</a></li>
+                    </ul>
+                    <div>
+                        <textarea id="stdin" class="tab"></textarea>
+                        <textarea id="output" class="tab" readonly="readonly"></textarea>
+                        <textarea id="errors" class="tab" readonly="readonly"></textarea>
 
-                    <button onClick="sendCode()" id="button">Send</button>
+                        <button onClick="sendCode()" id="button">Send</button>
+                    </div>
                 </div>
             </div>
             <div class="rightcol">правая колонка</div>
