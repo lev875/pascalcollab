@@ -46,11 +46,13 @@ a {
      right: 0;
      width: 20%; 
      height: 69.5vh;
+     border-left: 2px solid white; /*Грязыный хак, поправить!*/
 }
 .content {
-    left: 20%;
-    width: 60%; 
-    height: 100%;
+  left: 20%;
+  width: 60%; 
+  height: 100%;
+  border: 2px solid white;
 }
 .tabs {
     margin: 0;
@@ -76,17 +78,25 @@ a {
     text-decoration: none;
     color: black;
 }
+
+.firepad {
+  height: auto;
+}
+
 #selected {
     background-color: #272822;
 }
+
 #selected > a {
     color: white;
 }
+
 #stdin {
     display: block;
     border: 0;
     padding: 0;
 }
+
 #button {
     padding: 0;
     margin: 0;
@@ -98,6 +108,7 @@ a {
     height: 20vh;
     border-left: 5px solid white;
 }
+
 #editor {
     width: auto;
     height: 69.5vh;
