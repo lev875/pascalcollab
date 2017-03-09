@@ -19,6 +19,7 @@ firebase.auth().onAuthStateChanged(function(user) {
         firebase.database().ref("users/" + uid).once("value").then(update);
     } else {
         console.log("Not logged in!");
+        $("#root").children().remove();
     }
 });
 
@@ -34,6 +35,18 @@ errors.value = ''
 
 addBtn($('#root'), 'F');
 addBtn($('#root'), '');
+
+function signIn(){
+    firebase.auth().signInAnonymously().catch(function(error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode + ": " + errorMessage);
+    });
+}
+
+function signOut() {
+    firebase.auth().signOut();
+}
 
 function update(snapshot){
     $("#root").children().remove();

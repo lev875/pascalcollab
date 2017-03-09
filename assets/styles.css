@@ -36,23 +36,21 @@ a {
     height: 5vh;
 }
 .leftcol {
-  background: #272822;
+  background: white;
   width: 20%;
   height: 69.5vh;
 }
 
 .rightcol {
-     background: #272822;
+     background: white;
      right: 0;
      width: 20%; 
      height: 69.5vh;
-     border-left: 2px solid white; /*Грязыный хак, поправить!*/
 }
 .content {
   left: 20%;
   width: 60%; 
   height: 100%;
-  border: 2px solid white;
 }
 .tabs {
     margin: 0;
