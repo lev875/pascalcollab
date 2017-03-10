@@ -199,7 +199,7 @@ function removeFolder(parent, id){
 function addCollaborator(parent, name){
     if (currentFile){ //Поменять!!!
         var li = $("<li>");
-        var btn = $('<button class="btn" onClick = "removeCollaborator(this,' + name + '")">-</button>');
+        var btn = $('<button class="btn" onClick = "removeCollaborator(this, \'' + name + '\')">-</button>');
         var span = $('<span></span>');
         $("#collaborators").append(li);
         li.append(span);
@@ -219,8 +219,7 @@ function addCollaborator(parent, name){
 function removeCollaborator(parent, name){
     $(parent).parent().remove();
     var ref = firebase.database().ref("shared/" + name + "/" + currentFile.name);
-    console.log(ref.path.o);
-    //Я заебался
+    ref.remove();
 }
 
 function addBtn(parent) {
