@@ -234,6 +234,8 @@ function getName(parent, callback) {
             $('.btn').show();
             callback($(parent).parent(), txt, false);
         }
+    });
+    $("html").keyup(function(e) {  
         if (e.keyCode == 27) {
             $('.btn').show();
             tarea.remove();
