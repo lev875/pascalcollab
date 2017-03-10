@@ -112,11 +112,11 @@ a {
     height: 69.5vh;
 }
 
-/* cтили зайчатков файломенеджера */
 nav {
   width: 100%;
 }
-nav li, .rightcol li {
+
+.col li {
   display: block;
   background-color: white;
   border: 2px solid #2F3129;
@@ -126,11 +126,11 @@ nav li, .rightcol li {
   color: black;
 }
 
-nav  span{
+.col span{
   display: inline-block;
 }
 
-nav ul, .rightcol ul {
+.col ul {
   margin: 0;
   padding: 0;
   display: block;
@@ -147,12 +147,12 @@ span {
   cursor: pointer
 }
 
-nav button, .rightcol button {
+.col button {
   display: inline-block;
   margin: 2.5px;
 }
 
-nav textarea, .rightcol textarea {
+.col textarea {
   margin-left: 10px;
   width: 150px;
   height: 20px;

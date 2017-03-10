@@ -26,7 +26,7 @@ firebase.auth().onAuthStateChanged(function(user) {
         email = userEmail.replace(/\./g, ',');
     } else {
         console.log("Not logged in!");
-        $("#root").children().remove();
+        $(".col ul li").remove();
     }
 });
 
@@ -56,9 +56,6 @@ function signOut() {
 }
 
 function update(snapshot){
-    $("#root").children().remove();
-    addBtnF($('#root'));
-    addBtn($('#root'));
     var obj = snapshot.val();
     for(var key in obj){
         if(typeof obj[key] != "object" && obj[key] != ""){
