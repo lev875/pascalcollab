@@ -145,7 +145,6 @@ function addFile(parent, name, f) {
 function removeFile(parent, id){
     $(parent).parent().remove();
     var path = id.slice(0, id.search("/")) + "/" + email + "/" + id.slice(id.lastIndexOf("/") + 1).replace(/\//g, "/files/");
-    console.log(path);
     var ref = firebase.database().ref(path);
     var userCodeRef = ref.child("hash");
     var fileHash;
