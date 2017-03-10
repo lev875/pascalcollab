@@ -4,6 +4,7 @@ var errors = document.getElementById("errors");
 var editor = ace.edit("editor");
 var session = editor.getSession();
 var firepad;
+var currentFile;
 var uid;
 var userEmail;
 var email;
@@ -161,11 +162,11 @@ function addFolder(parent, name, f) {
         var span = $('<span></span>')
         var btn = $('<button class="btn" onClick = "removeFolder(this, \'' + id +'\')">-</button>');
         var div = $('<div display="inline-block">');
-        $(parent).append(div);
         div.append(span)
         span.text(name)
         div.append(ul)
         span.after(btn);
+        $(parent).append(div);
         ul.attr('id', id)
         addBtn(ul)
         span.click(function() {
@@ -233,7 +234,7 @@ function getName(parent, callback) {
             txt = txt.slice(0,-1);
             tarea.remove();
             $('.btn').show();
-            callback($(parent).parent(), txt);
+            callback($(parent).parent(), txt, false);
         }
         if (e.keyCode == 27) {
             $('.btn').show();
@@ -255,6 +256,8 @@ function CreateCode(filename, id){
     });
     var path = id.slice(id.search("/") + 1);
     firebase.database().ref("users/" + email + "/" + path).set(ref.key); 
+    currentFile = ref;
+    console.log(ref);
     ref = ref.child("code/");
     if (firepad) firepad.dispose();
     var div = $("<div>")
