@@ -21,11 +21,16 @@ firebase.auth().onAuthStateChanged(function(user) {
         console.log("logged in")
         //uid = user.uid;
         uid = "user1"; //For testing only
-        firebase.database().ref("users/" + email).once("value").then(update);
+        firebase.database().ref("users/" + email).once("value").then(function (snapshot) {
+            update(snapshot, $("#users\\/"));
+        });
+        firebase.database().ref("shared/user1").once("value").then(function (snapshot) {
+            update(snapshot, $("#shared"));
+        });
         userEmail = "user1@firebase.com";
         email = userEmail.replace(/\./g, ',');
-        addBtnF($('#root'));
-        addBtn($('#root'));
+        addBtnF($("#users\\/"));
+        addBtn($("#users\\/"));
         addBtnC($(".rightcol ul"));
     } else {
         console.log("Not logged in!");
@@ -56,10 +61,10 @@ function signOut() {
 }
 
 function update(snapshot, parent){
-    var obj = snapshot;
-    if (!parent) {
-        parent = $("#root");
+    if (snapshot) {
         var obj = snapshot.val();
+    } else {
+        var obj = snapshot;
     }
     for(key in obj){
         if (obj[key].type === "file"){
@@ -206,7 +211,7 @@ function addCollaborator(parent, name){
         li.append(btn);
         span.text(name);
         $(".btn").show();
-        var path = currentFile.id.slice(currentFile.id.search("/") + 1);
+        var path = currentFile.id.slice(currentFile.id.search("/") + 1); //Сломалось, отдебажить!
         path = path.replace(/\//g, "/files/");
         var ref = firebase.database().ref("users/" + email + "/" + path);
         var colRef = firebase.database().ref("shared/" + name + "/" + currentFile.name);
@@ -275,11 +280,10 @@ function CreateCode(filename, id){
             user3: true
         }
     });
-    var path = id.slice(id.search("/") + 1);
-    path = path.replace(/\//g, "/files/");
+    var path = id.slice(0, id.search("/")) + "/" + email + "/" + id.slice(id.lastIndexOf("/") + 1).replace(/\//g, "/files/");
     var obj = '{ "hash": "' + ref.key + '", "type": "file"}';
     obj = JSON.parse(obj);
-    firebase.database().ref("users/" + email + "/" + path).update(obj); 
+    firebase.database().ref(path).update(obj); 
     currentFile ={
         ref: ref,
         id: id,
@@ -302,22 +306,19 @@ function CreateCode(filename, id){
     });
 }
 
-function GetCode(id){
+function GetCode(id){ //Перепилить для работы с шарой, root заменить на users/
     $(".container").addClass("disabled");
     var ref = firebase.database().ref("usercode/");
-    var path = id.slice(id.search("/") + 1); 
-    path = path.replace(/\//g, "/files/");
-    var FileHash;
-    firebase.database().ref("users/" + email + "/" + path + "/hash").once("value").then(function(snapshot) {
+    var path = id.slice(0, id.search("/")) + "/" + email + "/" + id.slice(id.lastIndexOf("/") + 1).replace(/\//g, "/files/");
+    firebase.database().ref(path + "/hash").once("value").then(function(snapshot) {
         if (snapshot) {
-            fileHash = snapshot.val();
+            var fileHash = snapshot.val();
             ref = ref.child(fileHash);
             currentFile ={
                 ref: ref,
                 id: id,
                 name: id.slice(id.lastIndexOf("/") + 1)
             };
-            console.log(currentFile.name);
             ref = ref.child("code/")
             if (firepad) firepad.dispose();
             var div = $("<div>")
