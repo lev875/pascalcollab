@@ -218,7 +218,7 @@ function addCollaborator(parent, name){
 
 function removeCollaborator(parent, name){
     $(parent).parent().remove();
-    var ref = firebase.database().ref("shared/" + name + "/" currentFile.name);
+    var ref = firebase.database().ref("shared/" + name + "/" + currentFile.name);
     console.log(ref.path.o);
     //Я заебался
 }
