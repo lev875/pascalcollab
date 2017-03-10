@@ -17,10 +17,11 @@ var config = {
 firebase.initializeApp(config);
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
+        $(".container").addClass("disabled");
         console.log("logged in")
         //uid = user.uid;
         uid = "user1"; //For testing only
-        firebase.database().ref("users/" + email).on("value", update);
+        firebase.database().ref("users/" + email).once("value").then(update);
         userEmail = "user1@firebase.com";
         email = userEmail.replace(/\./g, ',');
     } else {
