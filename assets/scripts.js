@@ -4,7 +4,7 @@ var errors = document.getElementById("errors");
 var editor = ace.edit("editor");
 var session = editor.getSession();
 var firepad;
-var currentFile;
+var currentFile = null;
 var uid;
 var userEmail;
 var email;
@@ -24,9 +24,12 @@ firebase.auth().onAuthStateChanged(function(user) {
         firebase.database().ref("users/" + email).once("value").then(update);
         userEmail = "user1@firebase.com";
         email = userEmail.replace(/\./g, ',');
+        addBtnF($('#root'));
+        addBtn($('#root'));
+        addBtnC($(".rightcol ul"));
     } else {
         console.log("Not logged in!");
-        $(".col ul li").remove();
+        $(".col ul").children().remove();
     }
 });
 
@@ -40,9 +43,6 @@ output.value = ''
 stdin.value = ''
 errors.value = ''
 
-addBtnF($('#root'));
-addBtn($('#root'));
-
 function signIn(){
     firebase.auth().signInAnonymously().catch(function(error) {
         var errorCode = error.code;
@@ -55,16 +55,17 @@ function signOut() {
     firebase.auth().signOut();
 }
 
-function update(snapshot){
-    var obj = snapshot.val();
-    for(var key in obj){
-        if(typeof obj[key] != "object" && obj[key] != ""){
-            addFile($("#root"), key, true)
-        } else {
-            var folder = addFolder($("#root"), key, true);
-            for(var k in obj[key]){
-                addFile(folder, k);
-            }
+function update(snapshot, parent){
+    var obj = snapshot;
+    if (!parent) {
+        parent = $("#root");
+        var obj = snapshot.val();
+    }
+    for(key in obj){
+        if (obj[key].type === "file"){
+            addFile(parent, key, true);
+        } else if (obj[key].type === "folder") {
+            update(obj[key].files, addFolder(parent, key, true));
         }
     }
     $(".container").removeClass("disabled");
@@ -128,7 +129,6 @@ function addFile(parent, name, f) {
         if (!f) CreateCode(name, id);
         var li = $('<li></li>');
         var span = $("<span>" + name + "</span>");
-        span.css("display", "inline-block"); //Перекинуть в css
         $(parent).prepend(li);
         li.append(span);
         li.append('<button class="btn" onClick = "removeFile(this, \'' + id +'\')">-</button>');
@@ -140,22 +140,28 @@ function addFile(parent, name, f) {
 }
 
 function removeFile(parent, id){
-    var path = id.slice(id.search("/") + 1);
-    var userRef = firebase.database().ref("users/" + email +  "/" + path);
-    var fileHash;
     $(parent).parent().remove();
-    userRef.once("value").then(function (snapshot){
+    var path = id.slice(id.search("/") + 1);
+    path = path.replace(/\//g, "/files/");
+    var ref = firebase.database().ref("users/" + email +  "/" + path);
+    var userCodeRef = ref.child("hash");
+    var fileHash;
+    userCodeRef.once("value").then(function (snapshot){
         fileHash = snapshot.val();
         var codeRef = firebase.database().ref("usercode/" + fileHash);
+        if (currentFile.id == id) currentFile = null;
         codeRef.remove();
-        userRef.remove();
+        ref.remove();
     });
 }
 
 function addFolder(parent, name, f) {
     var id = $(parent).attr('id') + '/' + name;
     if (name && !document.getElementById(id) && checkName(name)) {
-        if (!f) firebase.database().ref("users/" + email + "/" + name).set("");
+        if (!f) {
+            var obj = {type: "folder"};
+            firebase.database().ref("users/" + email + "/" + name).update(obj);
+        }
         var ul = $('<ul></ul>')
         var span = $('<span></span>')
         var btn = $('<button class="btn" onClick = "removeFolder(this, \'' + id +'\')">-</button>');
@@ -176,34 +182,45 @@ function addFolder(parent, name, f) {
 }
 
 function removeFolder(parent, id){
+    $(parent).parent().remove();
     var path = id.slice(id.search("/") + 1); 
     var ref = firebase.database().ref("users/" + email +  "/" + path);
-    $(parent).parent().remove();
     ref.once("value").then(function (snapshot){
-        var obj = snapshot.val();
+        var obj = snapshot.val().files;
         var codeRef = firebase.database().ref("usercode/");
         for(var key in obj){
-            codeRef.child(obj[key]).remove();
+            codeRef.child(obj[key].hash).remove();
         }
         ref.remove();
     });
+    if (currentFile.id.search(id) != -1) currentFile = null;
 }
 
 function addCollaborator(parent, name){
-    console.log(parent);
-    var li = $("<li>");
-    var btn = $('<button class="btn" onClick = "remove(this)">-</button>');
-    var span = $('<span></span>');
-    $("#collaborators").append(li);
-    li.append(span);
-    li.append(btn);
-    span.text(name);
-    $(".btn").show();
-    //Firebase code here
+    if (currentFile){ //Поменять!!!
+        var li = $("<li>");
+        var btn = $('<button class="btn" onClick = "removeCollaborator(this,' + name + '")">-</button>');
+        var span = $('<span></span>');
+        $("#collaborators").append(li);
+        li.append(span);
+        li.append(btn);
+        span.text(name);
+        $(".btn").show();
+        var path = currentFile.id.slice(currentFile.id.search("/") + 1);
+        path = path.replace(/\//g, "/files/");
+        var ref = firebase.database().ref("users/" + email + "/" + path);
+        var colRef = firebase.database().ref("shared/" + name + "/" + currentFile.name);
+        ref.once("value").then(function (snapshot){
+            colRef.update(snapshot.val());
+        });
+    }
 }
 
-function remove(parent){
+function removeCollaborator(parent, name){
     $(parent).parent().remove();
+    var ref = firebase.database().ref("shared/" + name + "/" currentFile.name);
+    console.log(ref.path.o);
+    //Я заебался
 }
 
 function addBtn(parent) {
@@ -222,10 +239,15 @@ function addBtnF(parent) {
     $(parent).prepend(btn);
 }
 
+function addBtnC(parent) {
+    parent.append("<button onclick=\"getName(this, addCollaborator)\" class=\"btn\">Add collaborator</button>");
+}
+
 function getName(parent, callback) {
     $('.btn').hide();
-    var tarea = $('<textarea></textarea>')
+    var tarea = $('<textarea></textarea>');
     $(parent).before(tarea)
+    tarea.focus();
     tarea.keyup(function(e) {
         if (e.keyCode == 13) {
             var txt = tarea.val();
@@ -255,9 +277,15 @@ function CreateCode(filename, id){
         }
     });
     var path = id.slice(id.search("/") + 1);
-    firebase.database().ref("users/" + email + "/" + path).set(ref.key); 
-    currentFile = ref;
-    console.log(ref);
+    path = path.replace(/\//g, "/files/");
+    var obj = '{ "hash": "' + ref.key + '", "type": "file"}';
+    obj = JSON.parse(obj);
+    firebase.database().ref("users/" + email + "/" + path).update(obj); 
+    currentFile ={
+        ref: ref,
+        id: id,
+        name: filename
+    };
     ref = ref.child("code/");
     if (firepad) firepad.dispose();
     var div = $("<div>")
@@ -279,11 +307,18 @@ function GetCode(id){
     $(".container").addClass("disabled");
     var ref = firebase.database().ref("usercode/");
     var path = id.slice(id.search("/") + 1); 
+    path = path.replace(/\//g, "/files/");
     var FileHash;
-    firebase.database().ref("users/" + email + "/" + path).once("value").then(function(snapshot) {
+    firebase.database().ref("users/" + email + "/" + path + "/hash").once("value").then(function(snapshot) {
         if (snapshot) {
             fileHash = snapshot.val();
             ref = ref.child(fileHash);
+            currentFile ={
+                ref: ref,
+                id: id,
+                name: id.slice(id.lastIndexOf("/") + 1)
+            };
+            console.log(currentFile.name);
             ref = ref.child("code/")
             if (firepad) firepad.dispose();
             var div = $("<div>")
