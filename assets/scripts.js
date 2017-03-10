@@ -5,7 +5,6 @@ var editor = ace.edit("editor");
 var session = editor.getSession();
 var firepad;
 var currentFile = null;
-var uid;
 var userEmail;
 var email;
 var config = {
@@ -19,15 +18,13 @@ firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         $(".container").addClass("disabled");
         console.log("logged in")
-        //uid = user.uid;
-        uid = "user1"; //For testing only
         firebase.database().ref("users/" + email).once("value").then(function (snapshot) {
             update(snapshot, $("#users\\/"));
         });
-        firebase.database().ref("shared/user1").once("value").then(function (snapshot) {
+        firebase.database().ref("shared/" + email).once("value").then(function (snapshot) {
             update(snapshot, $("#shared"));
         });
-        userEmail = "user1@firebase.com";
+        userEmail = $("#email").val();
         email = userEmail.replace(/\./g, ',');
         addBtnF($("#users\\/"));
         addBtn($("#users\\/"));
@@ -211,7 +208,8 @@ function addCollaborator(parent, name){
         li.append(btn);
         span.text(name);
         $(".btn").show();
-        var path = currentFile.id.slice(currentFile.id.search("/") + 1); //Сломалось, отдебажить!
+        var path = currentFile.id.slice(currentFile.id.lastIndexOf("/") + 1);
+        console.log(path) //Сломалось, отдебажить!
         path = path.replace(/\//g, "/files/");
         var ref = firebase.database().ref("users/" + email + "/" + path);
         var colRef = firebase.database().ref("shared/" + name + "/" + currentFile.name);
