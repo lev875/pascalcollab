@@ -58,6 +58,7 @@ function signOut() {
 }
 
 function update(snapshot, parent){
+    //Добавить проверку на то, что файл удален из шары!
     if (snapshot) {
         var obj = snapshot.val();
     } else {
@@ -126,7 +127,7 @@ function sendCode() {
 }
 
 function addFile(parent, name, f) {
-    var id = $(parent).attr('id') + '/' + name
+    var id = $(parent).attr('id') + '/' + name;
     if (name && !document.getElementById(id) && checkName(name)) {
         if (!f) CreateCode(name, id);
         var li = $('<li></li>');
@@ -143,21 +144,22 @@ function addFile(parent, name, f) {
 
 function removeFile(parent, id){
     $(parent).parent().remove();
-    var path = id.slice(id.search("/") + 1);
-    path = path.replace(/\//g, "/files/");
-    var ref = firebase.database().ref("users/" + email +  "/" + path);
+    var path = id.slice(0, id.search("/")) + "/" + email + "/" + id.slice(id.lastIndexOf("/") + 1).replace(/\//g, "/files/");
+    console.log(path);
+    var ref = firebase.database().ref(path);
     var userCodeRef = ref.child("hash");
     var fileHash;
     userCodeRef.once("value").then(function (snapshot){
         fileHash = snapshot.val();
         var codeRef = firebase.database().ref("usercode/" + fileHash);
-        if (currentFile.id == id) currentFile = null;
+        if (currentFile && currentFile.id == id) currentFile = null;
         codeRef.remove();
         ref.remove();
     });
 }
 
 function addFolder(parent, name, f) {
+    //Починить
     var id = $(parent).attr('id') + '/' + name;
     if (name && !document.getElementById(id) && checkName(name)) {
         if (!f) {
@@ -185,8 +187,8 @@ function addFolder(parent, name, f) {
 
 function removeFolder(parent, id){
     $(parent).parent().remove();
-    var path = id.slice(id.search("/") + 1); 
-    var ref = firebase.database().ref("users/" + email +  "/" + path);
+    var path = id.slice(0, id.search("/")) + "/" + email + "/" + id.slice(id.lastIndexOf("/") + 1).replace(/\//g, "/files/");
+    var ref = firebase.database().ref(path);
     ref.once("value").then(function (snapshot){
         var obj = snapshot.val().files;
         var codeRef = firebase.database().ref("usercode/");
@@ -198,7 +200,7 @@ function removeFolder(parent, id){
     if (currentFile.id.search(id) != -1) currentFile = null;
 }
 
-function addCollaborator(parent, name){
+function addCollaborator(parent, name){ //Добавить в usercode!!!
     if (currentFile){ //Поменять!!!
         var li = $("<li>");
         var btn = $('<button class="btn" onClick = "removeCollaborator(this, \'' + name + '\')">-</button>');
@@ -209,7 +211,6 @@ function addCollaborator(parent, name){
         span.text(name);
         $(".btn").show();
         var path = currentFile.id.slice(currentFile.id.lastIndexOf("/") + 1);
-        console.log(path) //Сломалось, отдебажить!
         path = path.replace(/\//g, "/files/");
         var ref = firebase.database().ref("users/" + email + "/" + path);
         var colRef = firebase.database().ref("shared/" + name + "/" + currentFile.name);
@@ -270,13 +271,7 @@ function getName(parent, callback) {
 function CreateCode(filename, id){
     var ref = firebase.database().ref("usercode/").push();
     ref.set({
-        creator: email, //For testing only
-        collaborators: {
-            user2: true
-        },
-        readers: {
-            user3: true
-        }
+        creator: email
     });
     var path = id.slice(0, id.search("/")) + "/" + email + "/" + id.slice(id.lastIndexOf("/") + 1).replace(/\//g, "/files/");
     var obj = '{ "hash": "' + ref.key + '", "type": "file"}';
