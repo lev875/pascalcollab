@@ -16,9 +16,10 @@ var config = {
 firebase.initializeApp(config);
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
+        console.log("logged in")
         //uid = user.uid;
         uid = "user1"; //For testing only
-        firebase.database().ref("users/" + email).once("value").then(update);
+        firebase.database().ref("users/" + email).on("value", update);
         userEmail = "user1@firebase.com";
         email = userEmail.replace(/\./g, ',');
     } else {
@@ -37,8 +38,8 @@ output.value = ''
 stdin.value = ''
 errors.value = ''
 
-addBtn($('#root'), 'F');
-addBtn($('#root'), '');
+addBtnF($('#root'));
+addBtn($('#root'));
 
 function signIn(){
     firebase.auth().signInAnonymously().catch(function(error) {
@@ -54,16 +55,16 @@ function signOut() {
 
 function update(snapshot){
     $("#root").children().remove();
-    addBtn($('#root'), 'F');
-    addBtn($('#root'), '');
+    addBtnF($('#root'));
+    addBtn($('#root'));
     var obj = snapshot.val();
     for(var key in obj){
         if(typeof obj[key] != "object" && obj[key] != ""){
-            addFile($("#root"), key, false)
+            addFile($("#root"), key, true)
         } else {
-            var folder = addFolder($("#root"), key, false);
+            var folder = addFolder($("#root"), key, true);
             for(var k in obj[key]){
-                addFile(folder, k, false);
+                addFile(folder, k);
             }
         }
     }
@@ -124,8 +125,8 @@ function sendCode() {
 
 function addFile(parent, name, f) {
     var id = $(parent).attr('id') + '/' + name
-    if (!document.getElementById(id) && checkName(name)) {
-        if(f) CreateCode(name, id);
+    if (name && !document.getElementById(id) && checkName(name)) {
+        if (!f) CreateCode(name, id);
         var li = $('<li></li>');
         var span = $("<span>" + name + "</span>");
         span.css("display", "inline-block"); //Перекинуть в css
@@ -154,8 +155,8 @@ function removeFile(parent, id){
 
 function addFolder(parent, name, f) {
     var id = $(parent).attr('id') + '/' + name;
-    if (!document.getElementById(id) && checkName(name)) {
-        if(f) firebase.database().ref("users/" + email + "/" + name).set("");
+    if (name && !document.getElementById(id) && checkName(name)) {
+        if (!f) firebase.database().ref("users/" + email + "/" + name).set("");
         var ul = $('<ul></ul>')
         var span = $('<span></span>')
         var btn = $('<button class="btn" onClick = "removeFolder(this, \'' + id +'\')">-</button>');
@@ -166,7 +167,7 @@ function addFolder(parent, name, f) {
         div.append(ul)
         span.after(btn);
         ul.attr('id', id)
-        addBtn(ul, '')
+        addBtn(ul)
         span.click(function() {
             ul.children().fadeToggle('fast')
         });
@@ -189,62 +190,54 @@ function removeFolder(parent, id){
     });
 }
 
-function addCollaborator(parent){
+function addCollaborator(parent, name){
+    console.log(parent);
     var li = $("<li>");
     var btn = $('<button class="btn" onClick = "remove(this)">-</button>');
     var span = $('<span></span>');
-    $(parent).css('visibility', 'hidden');
     $("#collaborators").append(li);
     li.append(span);
     li.append(btn);
+    span.text(name);
+    $(".btn").show();
+    //Firebase code here
 }
 
 function remove(parent){
     $(parent).parent().remove();
 }
 
-function addBtn(parent, name) {
-    var btn = $('<button></button>').text('+' + name).attr({
-        "onClick": "getName" + name + "(this)",
+function addBtn(parent) {
+    var btn = $('<button></button>').text('+').attr({
+        "onClick": "getName(this, addFile)",
         "class": "btn"
     });
     $(parent).prepend(btn);
 }
 
-function getName(parent) {
-    $('.btn').css('visibility', 'hidden')
-    var tarea = $('<textarea></textarea>')
-    $(parent).before(tarea)
-    tarea.keyup(function(e) {
-        if (e.keyCode == 13) {
-            var txt = tarea.val()
-            txt = txt.slice(0,-1);
-            tarea.remove()
-            addFile($(parent).parent(), txt, true)
-            $('.btn').css('visibility', 'visible')
-        }
-        if (e.keyCode == 27) {
-            $('.btn').css('visibility', 'visible')
-            tarea.remove()
-        }
+function addBtnF(parent) {
+    var btn = $('<button></button>').text('+F').attr({
+        "onClick": "getName(this, addFolder)",
+        "class": "btn"
     });
+    $(parent).prepend(btn);
 }
 
-function getNameF(parent) {
-    $('.btn').css('visibility', 'hidden')
+function getName(parent, callback) {
+    $('.btn').hide();
     var tarea = $('<textarea></textarea>')
     $(parent).before(tarea)
     tarea.keyup(function(e) {
         if (e.keyCode == 13) {
             var txt = tarea.val();
             txt = txt.slice(0,-1);
-            $('.btn').css('visibility', 'visible')
-            addFolder($(parent).parent(), txt, true)
-            tarea.remove()
+            tarea.remove();
+            $('.btn').show();
+            callback($(parent).parent(), txt);
         }
         if (e.keyCode == 27) {
-            $('.btn').css('visibility', 'visible')
-            tarea.remove()
+            $('.btn').show();
+            tarea.remove();
         }
     });
 }
