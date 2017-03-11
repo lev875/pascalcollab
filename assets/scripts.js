@@ -19,15 +19,15 @@ firebase.auth().onAuthStateChanged(function(user) {
         $(".container").addClass("disabled");
         console.log("logged in")
         firebase.database().ref("users/" + email).once("value").then(function (snapshot) {
-            update(snapshot, $("#users\\/"));
+            update(snapshot, $("#users"));
         });
         firebase.database().ref("shared/" + email).once("value").then(function (snapshot) {
             update(snapshot, $("#shared"));
         });
         userEmail = $("#email").val();
         email = userEmail.replace(/\./g, ',');
-        addBtnF($("#users\\/"));
-        addBtn($("#users\\/"));
+        addBtnF($("#users"));
+        addBtn($("#users"));
         addBtnC($(".rightcol ul"));
     } else {
         console.log("Not logged in!");
@@ -272,7 +272,7 @@ function CreateCode(filename, id){
     ref.set({
         creator: email
     });
-    var path = id.slice(0, id.search("/")) + "/" + email + "/" + id.slice(id.lastIndexOf("/") + 1).replace(/\//g, "/files/");
+    var path = id.slice(0, id.search("/")) + "/" + email + "/" + id.slice(id.search("/") + 1).replace(/\//g, "/files/");
     var obj = '{ "hash": "' + ref.key + '", "type": "file"}';
     obj = JSON.parse(obj);
     firebase.database().ref(path).update(obj); 
