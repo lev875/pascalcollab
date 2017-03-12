@@ -17,21 +17,27 @@ firebase.initializeApp(config);
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         $(".container").addClass("disabled");
-        console.log("logged in")
+        $("#signUp").hide();
+        $("#signIn").hide();
+        $("#signOut").show();
+        userEmail = $("#email").val();
+        email = userEmail.replace(/\./g, ',');
         firebase.database().ref("users/" + email).once("value").then(function (snapshot) {
             update(snapshot, $("#users"));
         });
         firebase.database().ref("shared/" + email).once("value").then(function (snapshot) {
             update(snapshot, $("#shared"));
         });
-        userEmail = $("#email").val();
-        email = userEmail.replace(/\./g, ',');
+        console.log("logged in " + email)
         addBtnF($("#users"));
         addBtn($("#users"));
         addBtnC($(".rightcol ul"));
     } else {
         console.log("Not logged in!");
         $(".col ul").children().remove();
+        $("#signUp").show();
+        $("#signIn").show();
+        $("#signOut").hide();
     }
 });
 
@@ -45,8 +51,8 @@ output.value = ''
 stdin.value = ''
 errors.value = ''
 
-function signIn(){
-    firebase.auth().signInAnonymously().catch(function(error) {
+function signIn(email, password){
+    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log(errorCode + ": " + errorMessage);
@@ -55,6 +61,14 @@ function signIn(){
 
 function signOut() {
     firebase.auth().signOut();
+}
+
+function signUp(email, password) {
+    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode + ": " + errorMessage);        
+    });
 }
 
 function update(snapshot, parent){
@@ -209,6 +223,7 @@ function addCollaborator(parent, name){ //Добавить в usercode!!!
         li.append(btn);
         span.text(name);
         $(".btn").show();
+        name = name.replace(/\./g, ",");
         var path = currentFile.id.slice(currentFile.id.lastIndexOf("/") + 1);
         path = path.replace(/\//g, "/files/");
         var ref = firebase.database().ref("users/" + email + "/" + path);
