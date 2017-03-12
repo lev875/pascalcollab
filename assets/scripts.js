@@ -15,11 +15,11 @@ var config = {
 firebase.initializeApp(config);
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
-        $(".container").addClass("disabled");
         $("#signUp").hide();
         $("#signIn").hide();
         $("#signOut").show();
         $(".logIn").hide();
+        $(".container").addClass("disabled");
         email = user.email.replace(/\./g, ',');
         firebase.database().ref("users/" + email).once("value").then(function (snapshot) {
             update(snapshot, $("#users"));
@@ -32,15 +32,12 @@ firebase.auth().onAuthStateChanged(function(user) {
         addBtn($("#users"));
         addBtnC($(".rightcol ul"));
     } else {
-        console.log("Not logged in!");
-        email = null;
-        currentFile = null;
-        editorInit();
-        $(".col ul").children().remove();
         $("#signUp").show();
         $("#signIn").show();
         $("#signOut").hide();
         $(".logIn").show();
+        console.log("Not logged in!");
+        editorInit();
     }
 });
 
@@ -54,7 +51,7 @@ output.value = ''
 stdin.value = ''
 errors.value = ''
 
-function editorInit(){
+function editorInit(){ //Переписать с учетом ref
     if (firepad) firepad.dispose();
     var div = $("<div>")
     $("#editor").before(div);
@@ -69,6 +66,10 @@ function editorInit(){
 }
 
 function signIn(email, password){
+    $("#signUp").hide();
+    $("#signIn").hide();
+    $("#signOut").show();
+    $(".logIn").hide();
     firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -78,6 +79,13 @@ function signIn(email, password){
 
 function signOut() {
     firebase.auth().signOut();
+    $("#signUp").show();
+    $("#signIn").show();
+    $("#signOut").hide();
+    $(".logIn").show();
+    email = null;
+    currentFile = null;
+    $(".col ul").children().remove();
 }
 
 function signUp(email, password) {
@@ -318,17 +326,7 @@ function CreateCode(filename, id){
         name: filename
     };
     ref = ref.child("code/");
-    if (firepad) firepad.dispose();
-    var div = $("<div>")
-    $("#editor").before(div);
-    $("#editor").remove();
-    div.attr("id", "editor");
-    editor = ace.edit("editor");
-    session = editor.getSession();
-    session.setUseWrapMode(true);
-    session.setUseWorker(false);
-    editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/pascal");
+    editorInit();
     firepad = Firepad.fromACE(ref, editor, {
         defaultText: "begin\r\n\ \t writeln(\'hello world\');\r\nend."
     });
@@ -348,17 +346,7 @@ function GetCode(id){ //Перепилить для работы с шарой, 
                 name: id.slice(id.lastIndexOf("/") + 1)
             };
             ref = ref.child("code/")
-            if (firepad) firepad.dispose();
-            var div = $("<div>")
-            $("#editor").before(div);
-            $("#editor").remove();
-            div.attr("id", "editor");
-            editor = ace.edit("editor");
-            session = editor.getSession();
-            session.setUseWrapMode(true);
-            session.setUseWorker(false);
-            editor.setTheme("ace/theme/monokai");
-            editor.getSession().setMode("ace/mode/pascal");
+            editorInit();
             firepad = Firepad.fromACE(ref, editor);
             $(".container").removeClass("disabled");
         }
