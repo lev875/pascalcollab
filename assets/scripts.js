@@ -5,7 +5,6 @@ var editor = ace.edit("editor");
 var session = editor.getSession();
 var firepad;
 var currentFile = null;
-var userEmail;
 var email;
 var config = {
     apiKey: "AIzaSyDZp3pyrbZm34cnXJcVB5PzUeUOAkeaGHA",
@@ -20,8 +19,8 @@ firebase.auth().onAuthStateChanged(function(user) {
         $("#signUp").hide();
         $("#signIn").hide();
         $("#signOut").show();
-        userEmail = $("#email").val();
-        email = userEmail.replace(/\./g, ',');
+        $(".logIn").hide();
+        email = user.email.replace(/\./g, ',');
         firebase.database().ref("users/" + email).once("value").then(function (snapshot) {
             update(snapshot, $("#users"));
         });
@@ -34,10 +33,14 @@ firebase.auth().onAuthStateChanged(function(user) {
         addBtnC($(".rightcol ul"));
     } else {
         console.log("Not logged in!");
+        email = null;
+        currentFile = null;
+        editorInit();
         $(".col ul").children().remove();
         $("#signUp").show();
         $("#signIn").show();
         $("#signOut").hide();
+        $(".logIn").show();
     }
 });
 
@@ -50,6 +53,20 @@ editor.setValue("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
 output.value = ''
 stdin.value = ''
 errors.value = ''
+
+function editorInit(){
+    if (firepad) firepad.dispose();
+    var div = $("<div>")
+    $("#editor").before(div);
+    $("#editor").remove();
+    div.attr("id", "editor");
+    editor = ace.edit("editor");
+    session = editor.getSession();
+    session.setUseWrapMode(true);
+    session.setUseWorker(false);
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/pascal");
+}
 
 function signIn(email, password){
     firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
@@ -156,7 +173,7 @@ function addFile(parent, name, f) {
     } else alert('invalid name')
 }
 
-function removeFile(parent, id){
+function removeFile(parent, id){ //Добавить удаление для шары
     $(parent).parent().remove();
     var path = id.slice(0, id.search("/")) + "/" + email + "/" + id.slice(id.lastIndexOf("/") + 1).replace(/\//g, "/files/");
     var ref = firebase.database().ref(path);
@@ -224,6 +241,10 @@ function addCollaborator(parent, name){ //Добавить в usercode!!!
         span.text(name);
         $(".btn").show();
         name = name.replace(/\./g, ",");
+        var obj = '{ "' + name + '": true}';
+        obj = JSON.parse(obj);
+        var fileRef = currentFile.ref;
+        fileRef.child("collaborators").update(obj);
         var path = currentFile.id.slice(currentFile.id.lastIndexOf("/") + 1);
         path = path.replace(/\//g, "/files/");
         var ref = firebase.database().ref("users/" + email + "/" + path);

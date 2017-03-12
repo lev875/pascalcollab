@@ -8,7 +8,7 @@
 
         <!-- Ace -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/mode-c_cpp.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/mode-pascal.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/theme-monokai.js"></script>
 
         <!-- Firepad -->
@@ -24,8 +24,8 @@
     <body>
         <div class="header">
             Pascal collab например
-            <textarea id="email" placeholder="email"></textarea>
-            <textarea id="password" placeholder="password"></textarea>
+            <textarea id="email" class="logIn" placeholder="email"></textarea>
+            <textarea id="password" class="logIn" placeholder="password"></textarea>
             <button onclick="signIn($('#email').val(), $('#password').val())" id="signIn">Sign in</button>
             <button onclick="signOut()" id="signOut">Sign out</button>
             <button onclick="signUp($('#email').val(), $('#password').val())" id="signUp">SignUp</button>
