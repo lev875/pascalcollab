@@ -52,7 +52,6 @@ stdin.value = ''
 errors.value = ''
 
 function editorInit(){ //Переписать с учетом ref
-    if (firepad) firepad.dispose();
     var div = $("<div>")
     $("#editor").before(div);
     $("#editor").remove();
