@@ -77,6 +77,13 @@ function signIn(email, password){
     });
 }
 
+function signInG(){
+    var provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider).then(function(result) {
+        console.log(result);
+    });
+}
+
 function signOut() {
     firebase.auth().signOut();
     $("#signUp").show();
@@ -90,6 +97,10 @@ function signOut() {
 
 function signUp(email, password) {
     firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+        $("#signUp").show();
+        $("#signIn").show();
+        $("#signOut").hide();
+        $(".logIn").show();
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log(errorCode + ": " + errorMessage);        
