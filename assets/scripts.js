@@ -1,7 +1,4 @@
 /*global $, document, firebase, ace, Firepad, console, alert, XMLHttpRequest, setTimeout*/
-var output = document.getElementById("output");
-var stdin = document.getElementById("stdin");
-var errors = document.getElementById("errors");
 var editor = ace.edit("editor");
 var session = editor.getSession();
 var firepad;
@@ -193,9 +190,9 @@ function sendCode() {
             input: stdin.value
         });
     var button = $("#button");
-    output.value = '';
-    stdin.value = '';
-    errors.value = '';
+    $("#output").val("");
+    $("#stdin").val("");
+    $("errors").val("");
     xhr.open('POST', '/compile', true);
     xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
     xhr.send(body);
@@ -206,8 +203,8 @@ function sendCode() {
         button.innerHTML = "Send";
         button.disabled = false;
         var res = JSON.parse(xhr.responseText);
-        output.value = res.output;
-        errors.value = res.err;
+        output.val(res.output);
+        errors.val(res.err);
         if (res.output !== '') {
             changeTab('output');
         }
@@ -375,6 +372,6 @@ editor.setTheme("ace/theme/monokai");
 editor.getSession().setMode("ace/mode/pascal");
 editor.setValue("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
 
-output.value = '';
-stdin.value = '';
-errors.value = '';
+$("#output").val("");
+$("#stdin").val("");
+$("errors").val("");
