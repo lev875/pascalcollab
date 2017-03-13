@@ -35,6 +35,11 @@ a {
     color: white;
     height: 5vh;
 }
+
+.col {
+  overflow: auto;
+}
+
 .leftcol {
   background: white;
   width: 20%;
