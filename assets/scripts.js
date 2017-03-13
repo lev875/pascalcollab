@@ -277,10 +277,11 @@ function removeCollaborator(parent, name){
     $(parent).parent().remove();
     var ref = firebase.database().ref("shared/" + name + "/" + currentFile.name);
     ref.remove();
+    //Удаление колаба из файла. 
 }
 
 function addBtn(parent) {
-    var btn = $('<button></button>').text('+').attr({
+    var btn = $('<button></button>').text('Add File').attr({
         "onClick": "getName(this, addFile)",
         "class": "btn"
     });
@@ -288,7 +289,7 @@ function addBtn(parent) {
 }
 
 function addBtnF(parent) {
-    var btn = $('<button></button>').text('+F').attr({
+    var btn = $('<button></button>').text('Add Folder').attr({
         "onClick": "getName(this, addFolder)",
         "class": "btn"
     });
