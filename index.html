@@ -8,7 +8,7 @@
 
         <!-- Ace -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/mode-c_cpp.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/mode-pascal.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/theme-monokai.js"></script>
 
         <!-- Firepad -->
@@ -24,15 +24,20 @@
     <body>
         <div class="header">
             Pascal collab например
-            <button onclick="signIn()">Sign in</button>
-            <button onclick="signOut()">Sign out</button>
+            <button onclick="signOut()" id="signOut">Sign out</button>
+            <button onclick="signUp($('#email').val(), $('#password').val())" id="signUp" tabindex="4">SignUp</button>
+            <button onclick="signIn($('#email').val(), $('#password').val())" id="signIn" tabindex="3">Sign in</button>
+            <textarea id="password" class="logIn" placeholder="password" tabindex="2"></textarea>
+            <textarea id="email" class="logIn" placeholder="email" tabindex="1"></textarea>
         </div>
-        <div class="container disabled">
-            <div class="leftcol">
-                <nav>
-                    <ul id="root">
-                    </ul>
-                </nav>
+        <div class="container">
+            <div class="leftcol col">
+                <span>My Files</span>
+                <ul id="users">
+                </ul>
+                <span>Shared</span>
+                <ul id="shared">
+                </ul>
             </div>
             <div class="content">
                 <div id="editor"></div>
@@ -51,7 +56,10 @@
                     </div>
                 </div>
             </div>
-            <div class="rightcol">правая колонка</div>
+            <div class="rightcol col">
+                <ul id="collaborators">
+                </ul>
+            </div>
         </div>
         <script src="assets/scripts.js" type="text/javascript"></script>
     </body>

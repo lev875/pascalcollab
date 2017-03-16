@@ -7,24 +7,30 @@ body {
   background: white;
   height: 98.5%;
 }
+
 h2 {
     margin-top: 0;
 }
+
 textarea, button {
     border: 0;
     outline: none;
 }
+
 a {
     text-decoration: none;
     color: black;
 }
+
 .container { 
     position: relative;
     height: 94.7%;
 }
+
 .container > div { 
     position: absolute;
 }
+
 .header {
     text-align: left;
     font-size: 22px;
@@ -34,11 +40,23 @@ a {
     background: #330066;
     color: white;
     height: 5vh;
+    padding-right: 40px;
 }
+
+.col {
+  overflow: auto;
+}
+
 .leftcol {
   background: white;
   width: 20%;
   height: 69.5vh;
+}
+
+#users .selected {
+    border-color: white;
+    background-color: #2F3129;
+    color: white;
 }
 
 .rightcol {
@@ -112,25 +130,52 @@ a {
     height: 69.5vh;
 }
 
-/* cтили зайчатков файломенеджера */
+.header textarea, .header button {
+  margin: 5px;
+  margin-top: 12.5px;
+  float: right;
+}
+
+.header textarea {
+  resize: none;
+  height: 19px;
+}
+
+
+.removeBtn {
+    float: right;
+    width: 20px;
+}
+
+.leftcol li span, button {
+  cursor: pointer;
+}
+
+.leftcol li span {
+  overflow: hidden;
+  width: 83%;
+}
+
 nav {
   width: 100%;
 }
-nav li {
+
+.col li {
   display: block;
   background-color: white;
-  border: 2px solid #2F3129;
-  width: 150px;
+  border: 2.5px solid #2F3129;
+  width: 90%;
   height: 25px;
-  margin-left: 10px;
+  margin: 0px 10px;
+  padding-left: 2px;
   color: black;
 }
 
-nav  span{
+.col span{
   display: inline-block;
 }
 
-nav ul {
+.col ul {
   margin: 0;
   padding: 0;
   display: block;
@@ -143,16 +188,12 @@ nav ul ul {
   margin-left: 10px;
 }
 
-span {
-  cursor: pointer
-}
-
-nav button {
+.col button {
   display: inline-block;
   margin: 2.5px;
 }
 
-nav textarea {
+.col textarea {
   margin-left: 10px;
   width: 150px;
   height: 20px;
