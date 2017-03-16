@@ -340,7 +340,9 @@ function addCollaborator(){
         var ref = firebase.database().ref("users/" + email + "/" + path);
         var colRef = firebase.database().ref("shared/" + name + "/" + currentFile.name);
         ref.once("value").then(function (snapshot){
-            colRef.update(snapshot.val());
+            if(snapshot.val()) { //Говнооооооо! Переписать все нахуй!
+                colRef.update(snapshot.val());
+            }
         });
     }
 }
