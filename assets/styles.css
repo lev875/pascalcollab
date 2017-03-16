@@ -7,24 +7,30 @@ body {
   background: white;
   height: 98.5%;
 }
+
 h2 {
     margin-top: 0;
 }
+
 textarea, button {
     border: 0;
     outline: none;
 }
+
 a {
     text-decoration: none;
     color: black;
 }
+
 .container { 
     position: relative;
     height: 94.7%;
 }
+
 .container > div { 
     position: absolute;
 }
+
 .header {
     text-align: left;
     font-size: 22px;
@@ -44,6 +50,11 @@ a {
   background: white;
   width: 20%;
   height: 69.5vh;
+}
+
+#users .selected {
+    background-color: #2F3129;
+    color: white;
 }
 
 .rightcol {
@@ -117,6 +128,36 @@ a {
     height: 69.5vh;
 }
 
+.header {
+  padding-right: 40px;
+}
+
+.header textarea, .header button {
+  margin: 5px;
+  margin-top: 12.5px;
+  float: right;
+}
+
+.header textarea {
+  resize: none;
+  height: 19px;
+}
+
+
+.removeBtn {
+    float: right;
+    width: 20px;
+}
+
+.leftcol li span, button {
+  cursor: pointer;
+}
+
+.leftcol li span {
+  overflow: hidden;
+  width: 83%;
+}
+
 nav {
   width: 100%;
 }
@@ -125,9 +166,10 @@ nav {
   display: block;
   background-color: white;
   border: 2px solid #2F3129;
-  width: 150px;
+  width: 90%;
   height: 25px;
-  margin-left: 10px;
+  margin: 0px 10px;
+  padding-left: 2px;
   color: black;
 }
 
@@ -146,10 +188,6 @@ nav {
 
 nav ul ul {
   margin-left: 10px;
-}
-
-span {
-  cursor: pointer
 }
 
 .col button {

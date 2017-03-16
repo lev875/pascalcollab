@@ -24,11 +24,11 @@
     <body>
         <div class="header">
             Pascal collab например
-            <textarea id="email" class="logIn" placeholder="email"></textarea>
-            <textarea id="password" class="logIn" placeholder="password"></textarea>
-            <button onclick="signIn($('#email').val(), $('#password').val())" id="signIn">Sign in</button>
-            <button onclick="signOut()" id="signOut">Sign out</button>
             <button onclick="signUp($('#email').val(), $('#password').val())" id="signUp">SignUp</button>
+            <button onclick="signOut()" id="signOut">Sign out</button>
+            <button onclick="signIn($('#email').val(), $('#password').val())" id="signIn">Sign in</button>
+            <textarea id="password" class="logIn" placeholder="password"></textarea>
+            <textarea id="email" class="logIn" placeholder="email"></textarea>
         </div>
         <div class="container">
             <div class="leftcol col">
