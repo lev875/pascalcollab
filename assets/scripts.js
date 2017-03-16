@@ -192,8 +192,7 @@ function removeFolder(parent, id){
 function addBtn(parent, name) {
     var btn = $('<button></button>').text('+' + name).attr({
         "onClick": "getName" + name + "(this)",
-        "class": "btn",
-        "id": "rootBtn" + name
+        "class": "btn"
     });
     $(parent).prepend(btn);
 }
