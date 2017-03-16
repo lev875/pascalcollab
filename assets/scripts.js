@@ -112,7 +112,7 @@ function GetCode(id) { //Перепилить для работы с шарой,
                 if (obj) {
                     for(key in obj){
                         key = key.replace(/,/g, ".");
-                        addCollaborator($("#shared"), key);
+                        addCollaborator(null, key);
                     }
                 }
             })
@@ -319,11 +319,12 @@ function removeFolder(parent, id) { //Добавить удаление из ш�
     if (currentFile.id.search(id) != -1) currentFile = null;
 }
 
-function addCollaborator(parent, name){
+function addCollaborator(){
     if (currentFile){ //Поменять!!!
-        var li = $("<li>");
-        var btn = $('<button class="btn removeBtn" onClick = "removeCollaborator(this, \'' + name + '\')">-</button>');
-        var span = $('<span></span>');
+        var name = arguments[1], //Очень плохо
+            li = $("<li>"),
+            btn = $('<button class="btn removeBtn" onClick = "removeCollaborator(this, \'' + name + '\')">-</button>'),
+            span = $('<span></span>');
         $("#collaborators").append(li);
         li.append(span);
         li.append(btn);
