@@ -6,6 +6,7 @@ body {
   font: 10pt Arial, Helvetica, sans-serif;
   background: white;
   height: 98.5%;
+  min-width: 900px;
 }
 
 h2 {
@@ -144,16 +145,16 @@ a {
 
 .removeBtn {
     float: right;
-    width: 20px;
+    min-width: 20px;
 }
 
 .leftcol li span, button {
   cursor: pointer;
 }
 
-.leftcol li span {
+.col li span {
   overflow: hidden;
-  width: 83%;
+  max-width: 83%;
 }
 
 nav {
