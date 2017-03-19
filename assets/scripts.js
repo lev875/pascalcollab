@@ -88,8 +88,12 @@ function CreateCode(filename, id) {
 
 function GetCode(id) { //Перепилить для работы с шарой, root заменить на users/
     $(".container").addClass("disabled");
+    $(".selected").removeClass("selected");
+    $("#" + id.replace(/\//g, "\\/")).addClass("selected");
     var ref = firebase.database().ref("usercode/"),
         path = id.slice(0, id.search("/")) + "/" + email + "/" + id.slice(id.lastIndexOf("/") + 1).replace(/\//g, "/files/");
+    $("#collaborators").children().remove();
+    addBtnC($("#collaborators"));
     firebase.database().ref(path + "/hash").once("value").then(function (snapshot) {
         if (snapshot) {
             var fileHash = snapshot.val();
@@ -99,9 +103,19 @@ function GetCode(id) { //Перепилить для работы с шарой,
                 id: id,
                 name: id.slice(id.lastIndexOf("/") + 1)
             };
+            var colRef = ref.child("collaborators");
             ref = ref.child("code/");
             editorInit();
             firepad = Firepad.fromACE(ref, editor);
+            colRef.once("value").then(function (snapshot) {
+                var obj = snapshot.val();
+                if (obj) {
+                    for(key in obj){
+                        key = key.replace(/,/g, ".");
+                        addCollaborator(null, key);
+                    }
+                }
+            })
             $(".container").removeClass("disabled");
         }
     });
@@ -230,7 +244,7 @@ function addFile(parent, name, f) {
             span = $("<span>" + name + "</span>");
         $(parent).prepend(li);
         li.append(span);
-        li.append('<button class="btn" onClick = "removeFile(this, \'' + id + '\')">-</button>');
+        li.append('<button class="btn removeBtn" onClick = "removeFile(this, \'' + id + '\')">-</button>');
         li.attr('id', id);
         span.click(function () {
             GetCode(id);
@@ -271,7 +285,7 @@ function addFolder(parent, name, f) {
         }
         var ul = $('<ul></ul>'),
             span = $('<span></span>'),
-            btn = $('<button class="btn" onClick = "removeFolder(this, \'' + id + '\')">-</button>'),
+            btn = $('<button class="btn removeBtn" onClick = "removeFolder(this, \'' + id + '\')">-</button>'),
             div = $('<div display="inline-block">');
         div.append(span);
         span.text(name);
@@ -290,7 +304,7 @@ function addFolder(parent, name, f) {
     }
 }
 
-function removeFolder(parent, id) {
+function removeFolder(parent, id) { //Добавить удаление из шары
     $(parent).parent().remove();
     var path = id.slice(0, id.search("/")) + "/" + email + "/" + id.slice(id.lastIndexOf("/") + 1).replace(/\//g, "/files/"),
         ref = firebase.database().ref(path);
@@ -305,11 +319,12 @@ function removeFolder(parent, id) {
     if (currentFile.id.search(id) != -1) currentFile = null;
 }
 
-function addCollaborator(parent, name){ //Добавить в usercode!!!
+function addCollaborator(){
     if (currentFile){ //Поменять!!!
-        var li = $("<li>");
-        var btn = $('<button class="btn" onClick = "removeCollaborator(this, \'' + name + '\')">-</button>');
-        var span = $('<span></span>');
+        var name = arguments[1], //Очень плохо
+            li = $("<li>"),
+            btn = $('<button class="btn removeBtn" onClick = "removeCollaborator(this, \'' + name + '\')">-</button>'),
+            span = $('<span></span>');
         $("#collaborators").append(li);
         li.append(span);
         li.append(btn);
@@ -325,16 +340,19 @@ function addCollaborator(parent, name){ //Добавить в usercode!!!
         var ref = firebase.database().ref("users/" + email + "/" + path);
         var colRef = firebase.database().ref("shared/" + name + "/" + currentFile.name);
         ref.once("value").then(function (snapshot){
-            colRef.update(snapshot.val());
+            if(snapshot.val()) { //Говнооооооо! Переписать все нахуй!
+                colRef.update(snapshot.val());
+            }
         });
     }
 }
 
 function removeCollaborator(parent, name){
     $(parent).parent().remove();
+    name = name.replace(/\./g, ",");
     var ref = firebase.database().ref("shared/" + name + "/" + currentFile.name);
     ref.remove();
-    //Удаление колаба из файла. 
+    currentFile.ref.child("collaborators").child(name).remove(); //Затестить!
 }
 
 firebase.initializeApp(config);
