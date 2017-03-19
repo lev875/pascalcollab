@@ -9,7 +9,7 @@
         <!-- Ace -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/mode-pascal.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/theme-monokai.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/theme-solarized_light.js"></script>
 
         <!-- Firepad -->
         <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" />
@@ -23,21 +23,25 @@
     </head>
     <body>
         <div class="header">
-            Pascal collab например
-            <textarea id="email" class="logIn" placeholder="email"></textarea>
-            <textarea id="password" class="logIn" placeholder="password"></textarea>
-            <button onclick="signIn($('#email').val(), $('#password').val())" id="signIn">Sign in</button>
-            <button onclick="signOut()" id="signOut">Sign out</button>
+            <img src="assets/pic/pc.png"></img>
             <button onclick="signUp($('#email').val(), $('#password').val())" id="signUp">SignUp</button>
+            <button onclick="signOut()" id="signOut">Sign out</button>
+            <button onclick="signIn($('#email').val(), $('#password').val())" id="signIn">Sign in</button>
+            <textarea id="password" class="logIn" placeholder="password"></textarea>
+            <textarea id="email" class="logIn" placeholder="email"></textarea>
         </div>
         <div class="container">
             <div class="leftcol col">
-                <span>My Files</span>
-                <ul id="users">
-                </ul>
-                <span>Shared</span>
-                <ul id="shared">
-                </ul>
+                <img src="assets/pic/file.png"></img>
+                    <div class="b-popup-content">
+                        </br>
+                       <span>My Files</span>
+                        <ul id="users">
+                        </ul>
+                        <span id="name">Shared</span>
+                        <ul>
+                        </ul>
+                    </div>
             </div>
             <div class="content">
                 <div id="editor"></div>
@@ -57,8 +61,10 @@
                 </div>
             </div>
             <div class="rightcol col">
-                <ul id="collaborators">
-                </ul>
+                <img src="assets/pic/collabs.png">
+                <div class="collabcontainer">
+                <ul id="collaborators"></ul>
+                </div>
             </div>
         </div>
         <script src="assets/scripts.js" type="text/javascript"></script>

@@ -2,38 +2,47 @@ html {
   height: 100%;
 }
 
+
 body {
-  font: 10pt Arial, Helvetica, sans-serif;
-  background: white;
-  height: 98.5%;
+  font: 11pt calibri;
+  background: #CCFFCC;
+  height: 90%;
 }
+
 h2 {
     margin-top: 0;
 }
+
 textarea, button {
     border: 0;
     outline: none;
 }
+
 a {
     text-decoration: none;
     color: black;
 }
+
 .container { 
     position: relative;
     height: 94.7%;
 }
+
 .container > div { 
     position: absolute;
 }
+
 .header {
     text-align: left;
+    background:#679A48;
+    height: 8vh;
+    padding-right: 40px;
     font-size: 22px;
-    font-family: "Helvetica";
     font-style: italic;
-    padding: 5px;
-    background: #330066;
-    color: white;
-    height: 5vh;
+    color: #FF9933;
+}
+.header img{
+  height: 100%;
 }
 
 .col {
@@ -41,20 +50,35 @@ a {
 }
 
 .leftcol {
-  background: white;
-  width: 20%;
-  height: 69.5vh;
+  background: #CCFFCC;
+  width: 17%;
+  height: 90vh;
+}
+
+#users .selected {
+    background: #FF8C00;
+    color: #679A48;
+    border: 2px solid #FF8C00;
+    border-radius: 15px;
+    padding: 2px;
+    text-align: center;
+    font: 11pt calibri;
 }
 
 .rightcol {
-     background: white;
+     background:#CCFFCC;
      right: 0;
-     width: 20%; 
-     height: 69.5vh;
+     width: 17%; 
+     height: 90vh;
+}
+.rightcol img {
+    margin: 0px auto;
+    padding: 10px;
+    float: left;
 }
 .content {
-  left: 20%;
-  width: 60%; 
+  left: 17%;
+  width: 66%; 
   height: 100%;
 }
 .tabs {
@@ -65,7 +89,7 @@ a {
  padding: 0;
     margin: 0;
     height: 20vh;
-    width: 95%;
+    width: 92.5%;
     float: left;
     resize: none;
     display: none;
@@ -99,22 +123,62 @@ a {
     border: 0;
     padding: 0;
 }
-
-#button {
+.content #button {
     padding: 0;
     margin: 0;
     display: inline;
     float: left;
     background-color: #272822;
     color: white;
-    width: 5%;
+    width: 7.5%;
     height: 20vh;
-    border-left: 5px solid white;
+    border-left: 5px solid #009900;
 }
+
 
 #editor {
     width: auto;
-    height: 69.5vh;
+    height: 65vh;
+}
+
+.header textarea, .header button {
+  margin: 5px;
+  margin-top: 12.5px;
+  float: right;
+}
+
+.header textarea {
+  resize: none;
+  height: 19px;
+}
+.header button {
+  background: 0 0;
+  color: #FF8C00;
+  border: 2px solid #FF8C00;
+  border-radius: 15px;
+  padding: 2px;
+  text-align: center;
+  padding:5px;
+  font: 11pt calibri;
+}
+
+.removeBtn {
+    float: right;
+    width: 20px;
+}
+
+.leftcol img{
+  float: right;
+  margin: 0px auto;
+  padding: 10px;
+}
+.leftcol li span, button {
+  cursor: pointer;
+}
+
+.leftcol li span {
+  overflow: hidden;
+  width: 70%;
 }
 
 nav {
@@ -123,12 +187,15 @@ nav {
 
 .col li {
   display: block;
-  background-color: white;
-  border: 2px solid #2F3129;
-  width: 150px;
+     background: 0 0;
+    color: #679A48;
+    border: 2px solid #FF8C00;
+    border-radius: 15px;
+    padding: 2px;
+    text-align: center;
   height: 25px;
-  margin-left: 10px;
-  color: black;
+  margin: 0px 10px;
+  padding:2px;
 }
 
 .col span{
@@ -136,20 +203,15 @@ nav {
 }
 
 .col ul {
-  margin: 0;
+  margin: 5px;
   padding: 0;
   display: block;
-  border: 4px solid #2F3129;
-  background-color: #272822;
+  border-radius: 5px;
   color: white;
 }
 
 nav ul ul {
   margin-left: 10px;
-}
-
-span {
-  cursor: pointer
 }
 
 .col button {
@@ -162,7 +224,9 @@ span {
   width: 150px;
   height: 20px;
   resize: none;
-  border: solid 1px black;
+  border: 2px solid #FF9933;
+  border-radius: 15px;
+  background: #FDF6E3;
 }
 
 div.disabled
@@ -170,4 +234,39 @@ div.disabled
   pointer-events: none;
   opacity: 0.5;
   background: #CCC;
+}
+
+
+
+.b-popup-content {
+    margin:10px auto 0px 15px;
+    width:75%;
+    padding:10px;
+    background-color: #FDF6E3;
+    border-radius:5px;
+    box-shadow: 0px 0px 10px #000;
+
+}
+
+.b-popup-content span{
+  font-weight: bold;
+}
+
+/*блок в правой колонке*/
+.collabcontainer {
+    margin:10px 15px 0px auto;
+    width:75%;
+    padding:10px;
+    background-color: #FDF6E3;
+    border-radius:5px;
+    box-shadow: 0px 0px 10px #000;
+
+}
+
+.btn {
+    background: 0 0;
+    color: #679A48;
+    border: 2px solid #679A48;
+    border-radius: 15px;
+    font: 11pt calibri;
 }
