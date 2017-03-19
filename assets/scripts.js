@@ -386,7 +386,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 session.setUseWrapMode(true);
 session.setUseWorker(false);
-editor.setTheme("ace/theme/monokai");
+editor.setTheme("ace/theme/solarized_light");
 editor.getSession().setMode("ace/mode/pascal");
 editor.setValue("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
 
