@@ -382,7 +382,7 @@ firebase.auth().onAuthStateChanged(function (user) {
         $("#signOut").hide();
         $(".logIn").show();
         $(".leftcol").children().hide();
-        $(".leftcol").prepend("<span>Log in to gain acces to collaborative functions</span>");
+        $(".leftcol").prepend("<span id='logOutMessage'>Log in to gain acces to collaborative functions</span>");
         console.log("Not logged in!");
         editorInit();
     }
