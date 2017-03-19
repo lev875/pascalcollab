@@ -19,7 +19,7 @@ function editorInit() { //Переписать с учетом ref
     session = editor.getSession();
     session.setUseWrapMode(true);
     session.setUseWorker(false);
-    editor.setTheme("ace/theme/monokai");
+    editor.setTheme("ace/theme/solarized_light");
     editor.getSession().setMode("ace/mode/pascal");
 }
 
