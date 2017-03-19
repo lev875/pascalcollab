@@ -73,20 +73,24 @@ a {
      width: 17%; 
      height: 90vh;
 }
+
 .rightcol img {
     margin: 0px auto;
     padding: 10px;
     float: left;
 }
+
 .content {
   left: 17%;
   width: 66%; 
   height: 100%;
 }
+
 .tabs {
     margin: 0;
     padding: 0;
 }
+
 .tab {
  padding: 0;
     margin: 0;
@@ -96,16 +100,18 @@ a {
     resize: none;
     display: none;
     color: white;
-    background-color: #272822;
+    background-color: #FDF6E3;
 }
+
 .tabs > li {
     list-style-type: none;
     display: inline-block;
     padding: 10px 5px;
 }
+
 .tabs a {
     text-decoration: none;
-    color: black;
+    color: #679A48;
 }
 
 .firepad {
@@ -113,11 +119,11 @@ a {
 }
 
 #selected {
-    background-color: #272822;
+    background-color: #FDF6E3;
 }
 
 #selected > a {
-    color: white;
+    color: #679A48;
 }
 
 #stdin {
@@ -130,11 +136,11 @@ a {
     margin: 0;
     display: inline;
     float: left;
-    background-color: #272822;
-    color: white;
+    background-color: #FDF6E3;
+    color: #679A48;
     width: 7.5%;
     height: 20vh;
-    border-left: 5px solid #009900;
+    border-left: 5px solid #CCFFCC;
 }
 
 
