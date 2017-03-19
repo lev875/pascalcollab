@@ -13,7 +13,8 @@ h2 {
     margin-top: 0;
 }
 
-textarea, button {
+textarea, button, input {
+    padding: 0;
     border: 0;
     outline: none;
 }
@@ -131,13 +132,13 @@ a {
     height: 69.5vh;
 }
 
-.header textarea, .header button {
+.header button, .header input {
   margin: 5px;
   margin-top: 12.5px;
   float: right;
 }
 
-.header textarea {
+.header input {
   resize: none;
   height: 19px;
 }
