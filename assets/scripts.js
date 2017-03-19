@@ -362,6 +362,8 @@ firebase.auth().onAuthStateChanged(function (user) {
         $("#signIn").hide();
         $("#signOut").show();
         $(".logIn").hide();
+        $(".leftcol").children().show();
+        $(".leftcol > span").remove();
         $(".container").addClass("disabled");
         email = user.email.replace(/\./g, ',');
         firebase.database().ref("users/" + email).once("value").then(function (snapshot) {
@@ -379,6 +381,8 @@ firebase.auth().onAuthStateChanged(function (user) {
         $("#signIn").show();
         $("#signOut").hide();
         $(".logIn").show();
+        $(".leftcol").children().hide();
+        $(".leftcol").prepend("<span>Log in to gain acces to collaborative functions</span>");
         console.log("Not logged in!");
         editorInit();
     }
