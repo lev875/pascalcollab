@@ -393,3 +393,7 @@ editor.setValue("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
 $("#output").val("");
 $("#stdin").val("");
 $("errors").val("");
+
+$("#fileBtn").click(function () {
+    $("#leftcontainer").toggle();
+});
