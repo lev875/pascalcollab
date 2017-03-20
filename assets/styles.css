@@ -57,7 +57,7 @@ a {
   height: 90vh;
 }
 
-#users .selected {
+.col .selected {
     background: #FF8C00;
     color: #679A48;
     border: 2px solid #FF8C00;
