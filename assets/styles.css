@@ -1,3 +1,5 @@
+@import url(https://fonts.googleapis.com/css?family=Lobster);
+
 html {
   height: 100%;
 }
@@ -43,8 +45,8 @@ a {
     color: #FF9933;
 }
 
-.header img {
-  height: 100%;
+.header h1 {
+    font-family: Lobster;
 }
 
 .col {
