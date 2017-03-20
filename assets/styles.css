@@ -311,6 +311,8 @@ div.disabled
     border: 2px solid #679A48;
     border-radius: 15px;
     font: 11pt calibri;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 #fileBtn {
