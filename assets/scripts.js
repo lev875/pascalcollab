@@ -242,7 +242,7 @@ class collabs {
         }).click(() => {
            getName($("#collaborators"), this.addCollaborator.bind(this)) 
         });
-        codeRef.child(currentFile.hash + "/collaborators").once("value").then((snapshot) => {
+        codeRef.child(currentFile.hash + "/collaborators").once("value", (snapshot) => {
             if (snapshot.val()) {
                 this.collabs = snapshot.val();
                 for(var key in this.collabs){
@@ -262,6 +262,7 @@ class collabs {
             [currentFile.name]: currentFile.hash
         });
         this.collabs[email.toString().replace(/\./g, ",")] = true;
+        codeRef.child(currentFile.hash + "/collaborators").update(this.collabs);
         currentFile.collaborators = this.collabs;
         this.addInterface(email);
         updateDB();
@@ -272,6 +273,7 @@ class collabs {
         this.interfaces[email].remove();
         delete this.interfaces[email];
         firebase.database().ref("shared" + "/" + email + "/" + currentFile.name).set(null);
+        codeRef.child(currentFile.hash + "/collaborators/" + email).set(null);
         currentFile.collaborators[email] = null;
         updateDB();
     }
@@ -308,6 +310,7 @@ class share {
         for(var key in this) {
             var li = $("<li></li>"),
                 span = $("<span>" + key + "</span>").click(() => {
+                    li.addClass("selected");
                     editorInit(this[key]);
                 });
             $("#shared").append(li);
@@ -469,6 +472,7 @@ firebase.auth().onAuthStateChanged(function (user) {
             userFiles.clone(snapshot.val());
             $("#users").children().remove();
             userFiles.addInterface($("#users"));
+            updateDB();
         });
         shareRef.on("value", function (snapshot) {
             sharedFiles = new share(snapshot.val());
