@@ -35,7 +35,7 @@ function cloneObj(obj) {
 
 function updateDB() {
     var newObj = cloneObj(userFiles);
-    userRef.update(newObj);
+    userRef.set(newObj);
 }
 
 class file {
@@ -47,10 +47,19 @@ class file {
                 code: "",
                 creator: email
             }).key;
+            this.collaborators = {};
         }
     }
     
     remove() {
+        if (currentFile === this) {
+            $("#collaborators").children().remove();
+            currentFile = null;
+            collaborators = null;
+        }
+        for(var key in this.collaborators) {
+            firebase.database().ref("shared/" + key + "/" + this.name).set(null);
+        }
         codeRef.child(this.hash).remove();
         this.removeInterface();
         for(var key in this) {
@@ -253,8 +262,9 @@ class collabs {
             [currentFile.name]: currentFile.hash
         });
         this.collabs[email.toString().replace(/\./g, ",")] = true;
+        currentFile.collaborators = this.collabs;
         this.addInterface(email);
-        this.writeToDB();//Переписать, чтоб модифицировался CurrentFile сука!
+        updateDB();
     }
     
     remove(email) {
@@ -262,7 +272,8 @@ class collabs {
         this.interfaces[email].remove();
         delete this.interfaces[email];
         firebase.database().ref("shared" + "/" + email + "/" + currentFile.name).set(null);
-        this.writeToDB();
+        currentFile.collaborators[email] = null;
+        updateDB();
     }
     
     addInterface(email){
