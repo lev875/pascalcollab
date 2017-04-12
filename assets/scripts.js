@@ -24,7 +24,9 @@ function cloneObj(obj) {
             if(obj.type === "folder" && key === "files") {
                 newObj.files = [];
                 for(var i = 0; i < obj.files.length; i++) {
-                    newObj.files[i] = cloneObj(obj.files[i]);
+                    if(obj.files[i]) {
+                        newObj.files.push(cloneObj(obj.files[i]));   
+                    }
                 }
             } else {
                 newObj[key] = obj[key];
@@ -35,6 +37,7 @@ function cloneObj(obj) {
 }
 
 function updateDB() {
+    userFiles.files.sort(userFiles.sortFileFolders);
     var newObj = cloneObj(userFiles);
     userRef.set(newObj);
 }
