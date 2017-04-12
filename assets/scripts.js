@@ -339,9 +339,10 @@ function editorInit(hash) {
     session.setUseWorker(false);
     editor.setTheme("ace/theme/solarized_light");
     editor.getSession().setMode("ace/mode/pascal");
-    firepad = Firepad.fromACE(codeRef.child(hash), editor);
-    firepad.userId(uid); //Сделать через firebase auth
-    firepad.deafaultText("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
+    firepad = Firepad.fromACE(codeRef.child(hash), editor, {
+        userId: uid,
+        deafaultText: "begin\r\n\ \t writeln(\'hello world\');\r\nend."
+    });
 }
 
 function getName(parent, callback) {

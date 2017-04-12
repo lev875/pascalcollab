@@ -48,6 +48,7 @@ a {
 .header h1 {
     font-family: Lobster;
     float: left;
+    margin: 5px;
 }
 
 .col {
@@ -183,6 +184,7 @@ a {
   margin: 0px auto;
   padding: 10px;
 }
+
 .leftcol li span, button {
   cursor: pointer;
 }
@@ -190,6 +192,10 @@ a {
 .leftcol li span {
   overflow: hidden;
   width: 70%;
+}
+
+.leftcol span {
+  cursor: pointer;
 }
 
 .header button, .header input {
@@ -266,7 +272,7 @@ nav ul ul {
 .col textarea {
   padding: 5px;
   margin-left: 10px;
-  width: 100%;
+  width: 90%;
   height: 25px;
   resize: none;
   border: 2px solid #FF9933;
