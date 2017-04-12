@@ -258,7 +258,7 @@ class collabs {
     }
     
     addCollaborator(email) {
-        firebase.database().ref("users/" + email).once("value").then((snapshot) => {
+        firebase.database().ref("users/" + email.toString().replace(/\./g, ",")).once("value").then((snapshot) => {
            if(snapshot.val()) {
                firebase.database().ref("shared").child(email.toString().replace(/\./g, ",")).update({
                     [currentFile.name]: currentFile.hash
@@ -339,6 +339,8 @@ function editorInit(hash) {
     editor.setTheme("ace/theme/solarized_light");
     editor.getSession().setMode("ace/mode/pascal");
     firepad = Firepad.fromACE(codeRef.child(hash), editor);
+    firepad.userId(user.uid); //Сделать через firebase auth
+    firepad.deafaultText("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
 }
 
 function getName(parent, callback) {
