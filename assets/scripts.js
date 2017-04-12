@@ -488,7 +488,6 @@ firebase.auth().onAuthStateChanged(function (user) {
         codeRef = null;
         shareRef = null;
         console.log("Not logged in!");
-        editorInit();
     }
 });
 
