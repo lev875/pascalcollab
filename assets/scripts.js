@@ -9,6 +9,7 @@ var editor = ace.edit("editor"),
         databaseURL: "https://pascalcollab.firebaseio.com"
     },
     email = null,
+    uid = null,
     userRef = null,
     shareRef = null,
     codeRef = null,
@@ -339,7 +340,7 @@ function editorInit(hash) {
     editor.setTheme("ace/theme/solarized_light");
     editor.getSession().setMode("ace/mode/pascal");
     firepad = Firepad.fromACE(codeRef.child(hash), editor);
-    firepad.userId(user.uid); //Сделать через firebase auth
+    firepad.userId(uid); //Сделать через firebase auth
     firepad.deafaultText("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
 }
 
@@ -455,6 +456,7 @@ firebase.auth().onAuthStateChanged(function (user) {
         $(".col").children().show();
         $(".leftcol > span").remove();
         email = user.email.replace(/\./g, ',');
+        uid = user.uid;
         userRef = firebase.database().ref("users/" + email);
         shareRef = firebase.database().ref("shared/" + email);
         codeRef = firebase.database().ref("usercode/");
