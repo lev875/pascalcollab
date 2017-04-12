@@ -336,7 +336,6 @@ function editorInit(hash) {
     session.setUseWorker(false);
     editor.setTheme("ace/theme/solarized_light");
     editor.getSession().setMode("ace/mode/pascal");
-    editor.setValue("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
     firepad = Firepad.fromACE(codeRef.child(hash), editor);
 }
 
@@ -494,7 +493,6 @@ session.setUseWrapMode(true);
 session.setUseWorker(false);
 editor.setTheme("ace/theme/solarized_light");
 editor.getSession().setMode("ace/mode/pascal");
-editor.setValue("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
 
 
 userFiles = new folder("My files");
