@@ -462,14 +462,18 @@ firebase.auth().onAuthStateChanged(function (user) {
         userRef = firebase.database().ref("users/" + email);
         shareRef = firebase.database().ref("shared/" + email);
         codeRef = firebase.database().ref("usercode/");
+        $(".container").addClass("disabled");
         userRef.once("value").then(function (snapshot) {
             userFiles.clone(snapshot.val());
             $("#users").children().remove();
             userFiles.addInterface($("#users"));
             updateDB();
+            $(".container").removeClass("disabled");
         });
+        $(".container").addClass("disabled");
         shareRef.on("value", function (snapshot) {
             sharedFiles = new share(snapshot.val());
+            $(".container").removeClass("disabled");
         });
     } else {
         $("#signUp").show();
