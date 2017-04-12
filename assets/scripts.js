@@ -227,7 +227,7 @@ class folder {
     restoreMethods() {
         for (var i = 0; i < this.files.length; i++){
             if (this.files[i].type === "file") {
-                this.files[i].__proto__ = new file(""); // Говно!
+                this.files[i].__proto__ = new file("");
             } else {
                 this.files[i].__proto__ = new folder("");
                 this.files[i].restoreMethods();
@@ -298,10 +298,6 @@ class collabs {
         li.append(span);
         li.append(btn);
         this.interfaces[email] = li;
-    }
-    
-    writeToDB() {
-        codeRef.child(currentFile.hash + "/collaborators").set(this.collabs);
     }
 }
 
@@ -500,7 +496,7 @@ session.setUseWrapMode(true);
 session.setUseWorker(false);
 editor.setTheme("ace/theme/solarized_light");
 editor.getSession().setMode("ace/mode/pascal");
-
+editor.setValue("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
 
 userFiles = new folder("My files");
 
