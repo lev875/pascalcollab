@@ -379,7 +379,6 @@ function signIn(email, password) {
     firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
         alert(error.code + ": " + error.message);
     });
-    userFiles = new folder("My Files");
 }
 
 function signOut() {
@@ -388,13 +387,7 @@ function signOut() {
 
 function signUp(email, password) {
     firebase.auth().createUserWithEmailAndPassword(email, password).catch(function (error) {
-        $("#signUp").show();
-        $("#signIn").show();
-        $("#signOut").hide();
-        $(".logIn").show();
-        var errorCode = error.code,
-            errorMessage = error.message;
-        console.log(errorCode + ": " + errorMessage);
+        alert(error.code + ": " + error.message);
     });
 }
 
@@ -464,16 +457,19 @@ firebase.auth().onAuthStateChanged(function (user) {
         codeRef = firebase.database().ref("usercode/");
         $(".container").addClass("disabled");
         userRef.once("value").then(function (snapshot) {
+            userFiles = new folder("My Files");
             userFiles.clone(snapshot.val());
             $("#users").children().remove();
             userFiles.addInterface($("#users"));
+            $("#users > div > button").remove();
+            $("#users > div > span").css({
+                color: "black"
+            });
             updateDB();
             $(".container").removeClass("disabled");
         });
-        $(".container").addClass("disabled");
         shareRef.on("value", function (snapshot) {
             sharedFiles = new share(snapshot.val());
-            $(".container").removeClass("disabled");
         });
     } else {
         $("#signUp").show();
@@ -509,4 +505,10 @@ $("errors").val("");
 
 $("#fileBtn").click(function () {
     $("#leftcontainer").fadeToggle();
+});
+
+$("#password").keyup((e) => {
+    if(e.keyCode === 13) {
+        signIn($('#email').val(), $('#password').val());    
+    }
 });
