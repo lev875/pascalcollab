@@ -258,14 +258,20 @@ class collabs {
     }
     
     addCollaborator(email) {
-        firebase.database().ref("shared").child(email.toString().replace(/\./g, ",")).update({
-            [currentFile.name]: currentFile.hash
+        firebase.database().ref("users/" + email).once("value").then((snapshot) => {
+           if(snapshot.val()) {
+               firebase.database().ref("shared").child(email.toString().replace(/\./g, ",")).update({
+                    [currentFile.name]: currentFile.hash
+                });
+                this.collabs[email.toString().replace(/\./g, ",")] = true;
+                codeRef.child(currentFile.hash + "/collaborators").update(this.collabs);
+                currentFile.collaborators = this.collabs;
+                this.addInterface(email);
+                updateDB();
+           } else {
+               alert("No such user!");
+           }
         });
-        this.collabs[email.toString().replace(/\./g, ",")] = true;
-        codeRef.child(currentFile.hash + "/collaborators").update(this.collabs);
-        currentFile.collaborators = this.collabs;
-        this.addInterface(email);
-        updateDB();
     }
     
     remove(email) {
@@ -330,6 +336,7 @@ function editorInit(hash) {
     session.setUseWorker(false);
     editor.setTheme("ace/theme/solarized_light");
     editor.getSession().setMode("ace/mode/pascal");
+    editor.setValue("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
     firepad = Firepad.fromACE(codeRef.child(hash), editor);
 }
 
@@ -369,27 +376,14 @@ function checkName(name) {
 }
 
 function signIn(email, password) {
-    $("#signUp").hide();
-    $("#signIn").hide();
-    $("#signOut").show();
-    $(".logIn").hide();
-    userFiles = new folder("root");
     firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
-        var errorCode = error.code,
-            errorMessage = error.message;
-        console.log(errorCode + ": " + errorMessage);
+        alert(error.code + ": " + error.message);
     });
+    userFiles = new folder("My Files");
 }
 
 function signOut() {
     firebase.auth().signOut();
-    $("#signUp").show();
-    $("#signIn").show();
-    $("#signOut").hide();
-    $(".logIn").show();
-    email = null;
-    currentFile = null;
-    $(".col ul").children().remove();
 }
 
 function signUp(email, password) {
@@ -477,7 +471,6 @@ firebase.auth().onAuthStateChanged(function (user) {
         shareRef.on("value", function (snapshot) {
             sharedFiles = new share(snapshot.val());
         });
-        console.log("logged in " + email);
     } else {
         $("#signUp").show();
         $("#signIn").show();
@@ -485,6 +478,7 @@ firebase.auth().onAuthStateChanged(function (user) {
         $(".logIn").show();
         $(".col").children().hide();
         $(".leftcol").prepend("<span id='logOutMessage'>Log in to gain acces to collaborative functions</span>");
+        email = null;
         currentFile = null;
         userFiles = null;
         sharedFiles = null;
