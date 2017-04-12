@@ -313,9 +313,11 @@ class share {
     }
     
     addInterface() {
+        $("#shared").children().remove();
         for(var key in this) {
             var li = $("<li></li>"),
                 span = $("<span>" + key + "</span>").click(() => {
+                    $(".selected").removeClass("selected");
                     li.addClass("selected");
                     editorInit(this[key]);
                 });
