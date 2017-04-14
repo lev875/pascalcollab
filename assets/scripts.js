@@ -89,11 +89,13 @@ class file {
         li.append(btn);
         li.attr('id', id);
         span.click(() => {
-            currentFile = this;
-            editorInit(this.hash);
-            $(".selected").removeClass("selected");
-            this.interface.children("li").addClass("selected");
-            collaborators = new collabs();
+            if(!span.hasClass("disabled")) {
+                currentFile = this;
+                editorInit(this.hash);
+                $(".selected").removeClass("selected");
+                this.interface.children("li").addClass("selected");
+                collaborators = new collabs();
+            }
         });
         this.interface = div;
     }
@@ -346,6 +348,7 @@ function editorInit(hash) {
 
 function getName(parent, callback) {
     $('.btn').hide();
+    $("span").addClass("disabled");
     var tarea = $('<textarea></textarea>');
     $(parent).before(tarea);
     tarea.focus();
@@ -355,6 +358,7 @@ function getName(parent, callback) {
             txt = txt.slice(0, -1);
             tarea.remove();
             $('.btn').show();
+            $("span").removeClass("disabled");
             callback(txt);
         }
     });
@@ -362,6 +366,7 @@ function getName(parent, callback) {
         if (e.keyCode === 27) {
             $('.btn').show();
             tarea.remove();
+            $("span").removeClass("disabled");
         }
     });
 }
@@ -499,8 +504,6 @@ session.setUseWorker(false);
 editor.setTheme("ace/theme/solarized_light");
 editor.getSession().setMode("ace/mode/pascal");
 editor.setValue("begin\r\n\ \t writeln(\'hello world\');\r\nend.");
-
-userFiles = new folder("My files");
 
 $("#output").val("");
 $("#stdin").val("");
