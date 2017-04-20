@@ -318,7 +318,7 @@ class share {
         $("#shared").children().remove();
         for(var key in this) {
             var li = $("<li></li>"),
-                span = $("<span>" + key + "</span>").click(() => {
+                span = $("<span>" + key.toString().replace(/\,/g, '.') + "</span>").click(() => {
                     $(".selected").removeClass("selected");
                     li.addClass("selected");
                     editorInit(this[key]);
@@ -344,6 +344,9 @@ function editorInit(hash) {
         userId: uid,
         deafaultText: "begin\r\n\ \t writeln(\'hello world\');\r\nend."
     });
+    $("#output").val("");
+    $("#stdin").val("");
+    $("errors").val("");
 }
 
 function getName(parent, callback) {
