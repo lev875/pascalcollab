@@ -299,7 +299,7 @@ class collabs {
             }),
             span = $('<span></span>');
         $("#collaborators").append(li);
-        span.text(email);
+        span.text(email.toString().replace(/,/g, '.'));
         li.append(span);
         li.append(btn);
         this.interfaces[email] = li;
@@ -318,7 +318,7 @@ class share {
         $("#shared").children().remove();
         for(var key in this) {
             var li = $("<li></li>"),
-                span = $("<span>" + key.toString().replace(/\,/g, '.') + "</span>").click(() => {
+                span = $("<span>" + key + "</span>").click(() => {
                     $(".selected").removeClass("selected");
                     li.addClass("selected");
                     editorInit(this[key]);
