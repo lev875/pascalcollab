@@ -1,12 +1,14 @@
+@import url(https://fonts.googleapis.com/css?family=Lobster);
+
 html {
   height: 100%;
 }
 
+
 body {
-  font: 10pt Arial, Helvetica, sans-serif;
-  background: white;
-  height: 98.5%;
-  min-width: 900px;
+  font: 11pt calibri;
+  background: #CCFFCC;
+  height: 90%;
 }
 
 h2 {
@@ -15,7 +17,7 @@ h2 {
 
 textarea, button, input {
     padding: 0;
-    border: 0;
+    border: none;
     outline: none;
 }
 
@@ -35,14 +37,18 @@ a {
 
 .header {
     text-align: left;
-    font-size: 22px;
-    font-family: "Helvetica";
-    font-style: italic;
-    padding: 5px;
-    background: #330066;
-    color: white;
-    height: 5vh;
+    background:#679A48;
+    height: 8vh;
     padding-right: 40px;
+    font-size: 22px;
+    font-style: italic;
+    color: #FF9933;
+}
+
+.header h1 {
+    font-family: Lobster;
+    float: left;
+    margin: 5px;
 }
 
 .col {
@@ -50,51 +56,66 @@ a {
 }
 
 .leftcol {
-  background: white;
-  width: 20%;
-  height: 69.5vh;
+  background: #CCFFCC;
+  width: 17%;
+  height: 90vh;
 }
 
-#users .selected {
-    border-color: white;
-    background-color: #2F3129;
-    color: white;
+.col .selected {
+    background: #FF8C00;
+    color: #679A48;
+    border: 2px solid #FF8C00;
+    border-radius: 15px;
+    padding: 2px;
+    text-align: center;
+    font: 11pt calibri;
 }
 
 .rightcol {
-     background: white;
+     background:#CCFFCC;
      right: 0;
-     width: 20%; 
-     height: 69.5vh;
+     width: 17%; 
+     height: 90vh;
 }
+
+.rightcol img {
+    margin: 0px auto;
+    padding: 10px;
+    float: left;
+}
+
 .content {
-  left: 20%;
-  width: 60%; 
+  left: 17%;
+  width: 66%; 
   height: 100%;
 }
+
 .tabs {
     margin: 0;
     padding: 0;
 }
+
 .tab {
  padding: 0;
     margin: 0;
     height: 20vh;
-    width: 95%;
+    width: 92.5%;
     float: left;
     resize: none;
     display: none;
-    color: white;
-    background-color: #272822;
+    color: #679A48;
+    background-color: #FDF6E3;
 }
+
 .tabs > li {
     list-style-type: none;
     display: inline-block;
     padding: 10px 5px;
 }
+
 .tabs a {
     text-decoration: none;
-    color: black;
+    color: #679A48;
 }
 
 .firepad {
@@ -102,11 +123,11 @@ a {
 }
 
 #selected {
-    background-color: #272822;
+    background-color: #FDF6E3;
 }
 
 #selected > a {
-    color: white;
+    color: #679A48;
 }
 
 #stdin {
@@ -114,28 +135,80 @@ a {
     border: 0;
     padding: 0;
 }
-
-#button {
+.content #button {
     padding: 0;
     margin: 0;
     display: inline;
     float: left;
-    background-color: #272822;
-    color: white;
-    width: 5%;
+    background-color: #FDF6E3;
+    color: #679A48;
+    width: 7.5%;
     height: 20vh;
-    border-left: 5px solid white;
+    border-left: 5px solid #CCFFCC;
 }
+
 
 #editor {
     width: auto;
-    height: 69.5vh;
+    height: 65vh;
+}
+
+.header textarea, .header button {
+  margin: 5px;
+  margin-top: 12.5px;
+  float: right;
+}
+
+.header textarea {
+  resize: none;
+  height: 19px;
+}
+.header button {
+  background: 0 0;
+  color: #FF8C00;
+  border: 2px solid #FF8C00;
+  border-radius: 15px;
+  padding: 2px;
+  text-align: center;
+  padding:5px;
+  font: 11pt calibri;
+}
+
+.removeBtn {
+    float: right;
+    width: 20px;
+}
+
+.leftcol img{
+  float: right;
+  margin: 0px auto;
+  padding: 10px;
+}
+
+.leftcol li span, button {
+  cursor: pointer;
+}
+
+.leftcol li span {
+  overflow: hidden;
+  width: 70%;
+}
+
+.leftcol span {
+  cursor: pointer;
 }
 
 .header button, .header input {
   margin: 5px;
-  margin-top: 12.5px;
   float: right;
+}
+
+.header button {
+  margin-top: 20px;
+}
+
+.header input {
+    margin-top: 28px;
 }
 
 .header input {
@@ -164,13 +237,15 @@ nav {
 
 .col li {
   display: block;
-  background-color: white;
-  border: 2.5px solid #2F3129;
-  width: 90%;
+  background: 0 0;
+  color: #679A48;
+  border: 2px solid #FF8C00;
+  border-radius: 15px;
+  padding: 2px;
+  text-align: center;
   height: 25px;
-  margin: 0px 10px;
-  padding-left: 2px;
-  color: black;
+  margin: 4px 10px;
+  padding:2px;
 }
 
 .col span{
@@ -178,12 +253,11 @@ nav {
 }
 
 .col ul {
-  margin: 0;
+  margin: 5px;
   padding: 0;
   display: block;
-  border: 4px solid #2F3129;
-  background-color: #272822;
-  color: white;
+  border-radius: 5px;
+  color: #679A48;
 }
 
 nav ul ul {
@@ -196,11 +270,14 @@ nav ul ul {
 }
 
 .col textarea {
+  padding: 5px;
   margin-left: 10px;
-  width: 150px;
-  height: 20px;
+  width: 90%;
+  height: 25px;
   resize: none;
-  border: solid 1px black;
+  border: 2px solid #FF9933;
+  border-radius: 15px;
+  background: #FDF6E3;
 }
 
 div.disabled
@@ -208,4 +285,45 @@ div.disabled
   pointer-events: none;
   opacity: 0.5;
   background: #CCC;
+}
+
+
+
+#leftcontainer {
+    margin:10px auto 0px 15px;
+    width:75%;
+    padding:10px;
+    background-color: #FDF6E3;
+    border-radius:5px;
+    box-shadow: 0px 0px 10px #000;
+
+}
+
+#leftcontainer span{
+  font-weight: bold;
+}
+
+/*блок в правой колонке*/
+#collaborators {
+    margin:10px 15px 0px auto;
+    width:75%;
+    padding:10px;
+    background-color: #FDF6E3;
+    border-radius:5px;
+    box-shadow: 0px 0px 10px #000;
+
+}
+
+.btn {
+    background: 0 0;
+    color: #679A48;
+    border: 2px solid #679A48;
+    border-radius: 15px;
+    font: 11pt calibri;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#fileBtn {
+    cursor: pointer;
 }

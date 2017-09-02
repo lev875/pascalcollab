@@ -3,13 +3,14 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>PascalCollab</title>
+        <link rel="icon" type="image/png" href="assets/pic/favicon.png" />
 
         <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
 
         <!-- Ace -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/mode-pascal.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/theme-monokai.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/theme-solarized_light.js"></script>
 
         <!-- Firepad -->
         <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" />
@@ -23,21 +24,23 @@
     </head>
     <body>
         <div class="header">
-            Pascal collab например
+            <h1>PascalCollab</h1>
+            <button onclick="signUp($('#email').val(), $('#password').val())" id="signUp">SignUp</button>
             <button onclick="signOut()" id="signOut">Sign out</button>
-            <button onclick="signUp($('#email').val(), $('#password').val())" id="signUp" tabindex="4">SignUp</button>
-            <button onclick="signIn($('#email').val(), $('#password').val())" id="signIn" tabindex="3">Sign in</button>
+            <button onclick="signIn($('#email').val(), $('#password').val())" id="signIn">Sign in</button>
             <input type="password" id="password" class="logIn" placeholder="password" tabindex="2" >
             <input type="email" id="email" class="logIn" placeholder="email" tabindex="1">
         </div>
         <div class="container">
             <div class="leftcol col">
-                <span>My Files</span>
-                <ul id="users">
-                </ul>
-                <span>Shared</span>
-                <ul id="shared">
-                </ul>
+                <img src="assets/pic/file.png" id="fileBtn">
+                <div id="leftcontainer">
+                    <ul id="users">
+                    </ul>
+                    <span>Shared</span>
+                    <ul id="shared">
+                    </ul>
+                </div>
             </div>
             <div class="content">
                 <div id="editor"></div>
@@ -57,6 +60,7 @@
                 </div>
             </div>
             <div class="rightcol col">
+                <img src="assets/pic/collabs.png">
                 <ul id="collaborators">
                 </ul>
             </div>
